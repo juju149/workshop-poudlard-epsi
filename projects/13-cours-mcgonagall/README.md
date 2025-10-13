@@ -1,6 +1,160 @@
-# Emploi du temps Electron
+# 📚 Emploi du Temps McGonagall
 
-Application Electron pour afficher un emploi du temps en scrappant un site web.
+Application Electron moderne avec React, Vite et Tailwind CSS pour afficher l'emploi du temps en récupérant les données via scraping web avec Puppeteer.
+
+## 🎯 Fonctionnalités
+
+- 🔐 Authentification automatique sur l'API wigorservices
+- 📅 Sélection de date pour consulter l'emploi du temps
+- 🎨 Interface moderne et responsive avec Tailwind CSS
+- ⚡ Build optimisé avec Vite
+- 🧪 Tests unitaires avec >80% de couverture
+- 📦 Packaging Windows avec Electron Builder
+
+## 🛠️ Stack Technique
+
+- **Electron** - Framework desktop multi-plateforme
+- **React 18** - Bibliothèque UI
+- **Vite** - Build tool moderne et rapide
+- **Tailwind CSS** - Framework CSS utility-first
+- **Puppeteer** - Scraping web automatisé
+- **Vitest** - Framework de test unitaire
+- **React Testing Library** - Tests de composants React
+
+## 📦 Installation
+
+```bash
+npm install
+```
+
+## 🚀 Utilisation
+
+### Mode Développement
+
+```bash
+# Lancer uniquement l'interface web (dev)
+npm run dev
+
+# Lancer l'application Electron complète
+npm run electron:dev
+```
+
+### Build Production
+
+```bash
+# Build de l'interface React
+npm run build
+
+# Build de l'exécutable Windows
+npm run electron:build
+```
+
+### Tests
+
+```bash
+# Lancer les tests
+npm test
+
+# Lancer les tests avec couverture
+npm run test:coverage
+
+# Lancer l'interface UI des tests
+npm run test:ui
+```
+
+## ⚙️ Configuration
+
+Créer un fichier `.env` à la racine du projet avec vos identifiants :
+
+```env
+USERNAME=VotreIdentifiant
+PASSWORD=VotreMotDePasse
+```
+
+> ⚠️ Ne commitez jamais votre fichier `.env` avec vos vrais identifiants !
+
+## 📊 Couverture de Tests
+
+La couverture de tests actuelle est de **81.65%**, dépassant l'objectif de 80% :
+
+- **Composants React** : 100% de couverture
+- **Utilitaires** : 100% de couverture
+- **App principal** : 96% de couverture
+
+## 🏗️ Architecture
+
+```
+13-cours-mcgonagall/
+├── electron/           # Processus principal Electron
+│   ├── main.js        # Point d'entrée Electron
+│   └── preload.js     # Script de préchargement (IPC bridge)
+├── src/               # Code source React
+│   ├── components/    # Composants React
+│   │   ├── DateSelector.jsx
+│   │   ├── ScheduleView.jsx
+│   │   ├── CourseCard.jsx
+│   │   ├── LoadingSpinner.jsx
+│   │   └── ErrorMessage.jsx
+│   ├── utils/         # Fonctions utilitaires
+│   │   └── dateUtils.js
+│   ├── App.jsx        # Composant racine
+│   ├── main.jsx       # Point d'entrée React
+│   └── index.css      # Styles globaux (Tailwind)
+├── tests/             # Tests unitaires
+│   ├── components/    # Tests des composants
+│   └── utils/         # Tests des utilitaires
+├── scraper.js         # Module de scraping Puppeteer
+└── package.json       # Configuration npm
+```
+
+## 📚 Documentation Technique
+
+### Communication IPC (Inter-Process Communication)
+
+L'application utilise IPC pour communiquer entre le processus principal Electron et le renderer React :
+
+- `scrape-schedule` : Récupère l'emploi du temps pour une date donnée
+- `get-env` : Vérifie la présence des identifiants
+
+### Scraper
+
+Le scraper utilise Puppeteer pour :
+1. Se connecter à l'API wigorservices
+2. Gérer l'authentification automatique
+3. Parser le DOM pour extraire les cours (matière, professeur, horaire, salle)
+4. Retourner les données structurées par jour
+
+## 🎮 Utilisation de l'Application
+
+1. Lancez l'application
+2. Sélectionnez une date ou cliquez sur "Aujourd'hui"
+3. L'emploi du temps s'affiche avec les cours organisés par jour
+4. Chaque cours affiche : matière, professeur, horaire et salle
+
+## 📦 Build Windows
+
+L'exécutable Windows sera généré dans `dist-electron/` après avoir exécuté :
+
+```bash
+npm run electron:build
+```
+
+## 🐛 Dépannage
+
+### Le scraper ne fonctionne pas
+- Vérifiez que vos identifiants sont corrects dans `.env`
+- Vérifiez votre connexion internet
+- Assurez-vous que Puppeteer est correctement installé
+
+### L'interface ne charge pas
+- Vérifiez que le build a été effectué : `npm run build`
+- En mode dev, vérifiez que le serveur Vite tourne sur le port 5173
+
+## 📄 Licence
+
+MIT
+
+---
 
 ## Historique des prompts et réponses
 

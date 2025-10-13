@@ -16,7 +16,7 @@ class WizardQuizApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF1a1a2e),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 8,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

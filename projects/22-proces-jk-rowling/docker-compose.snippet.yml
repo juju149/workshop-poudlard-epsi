@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  jk-rowling-analysis:
+    container_name: proces-jk-rowling
+    build:
+      context: ../..
+      dockerfile: projects/22-proces-jk-rowling/Dockerfile
+    volumes:
+      - ../../context/books:/app/src/../../context/books:ro
+      - ./output:/app/output
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - poudlard-network
+
+networks:
+  poudlard-network:
+    external: true
+    name: poudlard-network

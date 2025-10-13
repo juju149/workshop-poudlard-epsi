@@ -1,5 +1,7 @@
-require('dotenv').config();
-const puppeteer = require('puppeteer');
+import { config } from 'dotenv';
+import puppeteer from 'puppeteer';
+
+config();
 
 async function scrapeSchedule(date = null) {
   const browser = await puppeteer.launch({ headless: false });
@@ -81,6 +83,8 @@ async function scrapeSchedule(date = null) {
   
   return result;
 }
+
+export { scrapeSchedule };
 
 // Utilisation : node scraper.js 10/13/2025
 const inputDate = process.argv[2];

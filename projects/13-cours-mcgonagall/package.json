@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Application Electron pour emploi du temps avec scraping.",
   "main": "main.js",
+  "type": "module",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "echo 'Build completed'"
   },
   "keywords": [
     "electron",

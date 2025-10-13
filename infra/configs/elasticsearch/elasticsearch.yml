@@ -1,0 +1,12 @@
+cluster.name: "dockerwarts-cluster"
+network.host: 0.0.0.0
+
+# Security
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+
+# Monitoring
+xpack.monitoring.collection.enabled: true
+
+# Performance
+bootstrap.memory_lock: true

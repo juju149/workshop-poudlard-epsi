@@ -1,0 +1,30 @@
+# Environment variables
+.env
+
+# Backups
+backups/
+*.tar.gz
+*.tar.xz
+*.zip
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Secrets
+secrets/
+*.key
+*.pem
+*.crt

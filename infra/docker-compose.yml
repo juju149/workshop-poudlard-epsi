@@ -1,0 +1,386 @@
+version: '3.8'
+
+# ==============================================================================
+# DOCKERWARTS - Infrastructure Big Data
+# ==============================================================================
+# Services: GLPI, Elasticsearch, Grafana, Cassandra, Traefik (firewall/reverse proxy)
+# High Availability: Health checks, restart policies, replicas
+# ==============================================================================
+
+services:
+  # ==========================================================================
+  # TRAEFIK - Reverse Proxy & Application Firewall
+  # ==========================================================================
+  traefik:
+    image: traefik:v2.10
+    container_name: dockerwarts-traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--metrics.prometheus=true"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./configs/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - traefik-certs:/certs
+    networks:
+      - frontend
+      - backend
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ==========================================================================
+  # GLPI - Ticketing System
+  # ==========================================================================
+  glpi-db:
+    image: mariadb:10.11
+    container_name: dockerwarts-glpi-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${GLPI_DB_ROOT_PASSWORD:-changeme_root}
+      - MYSQL_DATABASE=${GLPI_DB_NAME:-glpidb}
+      - MYSQL_USER=${GLPI_DB_USER:-glpi_user}
+      - MYSQL_PASSWORD=${GLPI_DB_PASSWORD:-changeme_glpi}
+    volumes:
+      - glpi-db-data:/var/lib/mysql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${GLPI_DB_ROOT_PASSWORD:-changeme_root}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  glpi:
+    image: diouxx/glpi:latest
+    container_name: dockerwarts-glpi
+    restart: unless-stopped
+    environment:
+      - TIMEZONE=Europe/Paris
+    volumes:
+      - glpi-data:/var/www/html/glpi
+      - ./configs/glpi:/etc/glpi:ro
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.glpi.rule=Host(`glpi.dockerwarts.local`)"
+      - "traefik.http.routers.glpi.entrypoints=web"
+      - "traefik.http.services.glpi.loadbalancer.server.port=80"
+    depends_on:
+      glpi-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==========================================================================
+  # ELASTICSEARCH - Search & Indexing
+  # ==========================================================================
+  elasticsearch-master:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: dockerwarts-elasticsearch-master
+    restart: unless-stopped
+    environment:
+      - node.name=es-master
+      - cluster.name=dockerwarts-cluster
+      - discovery.seed_hosts=elasticsearch-data
+      - cluster.initial_master_nodes=es-master
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-master-data:/usr/share/elasticsearch/data
+      - ./configs/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  elasticsearch-data:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: dockerwarts-elasticsearch-data
+    restart: unless-stopped
+    environment:
+      - node.name=es-data
+      - cluster.name=dockerwarts-cluster
+      - discovery.seed_hosts=elasticsearch-master
+      - cluster.initial_master_nodes=es-master
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data-data:/usr/share/elasticsearch/data
+    networks:
+      - backend
+    depends_on:
+      elasticsearch-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ==========================================================================
+  # KIBANA - Elasticsearch UI (Optional but useful)
+  # ==========================================================================
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: dockerwarts-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch-master:9200
+      - SERVER_NAME=kibana.dockerwarts.local
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kibana.rule=Host(`kibana.dockerwarts.local`)"
+      - "traefik.http.routers.kibana.entrypoints=web"
+      - "traefik.http.services.kibana.loadbalancer.server.port=5601"
+    depends_on:
+      elasticsearch-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==========================================================================
+  # CASSANDRA - Data Lake (Multi-node for HA)
+  # ==========================================================================
+  cassandra-node1:
+    image: cassandra:4.1
+    container_name: dockerwarts-cassandra-node1
+    restart: unless-stopped
+    environment:
+      - CASSANDRA_CLUSTER_NAME=DockerwartsCassandraCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=100M
+    volumes:
+      - cassandra-node1-data:/var/lib/cassandra
+      - ./configs/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml:ro
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "nodetool status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  cassandra-node2:
+    image: cassandra:4.1
+    container_name: dockerwarts-cassandra-node2
+    restart: unless-stopped
+    environment:
+      - CASSANDRA_CLUSTER_NAME=DockerwartsCassandraCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack2
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=100M
+    volumes:
+      - cassandra-node2-data:/var/lib/cassandra
+    networks:
+      - backend
+    depends_on:
+      cassandra-node1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "nodetool status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # ==========================================================================
+  # GRAFANA - Monitoring & Visualization
+  # ==========================================================================
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: dockerwarts-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./configs/grafana/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: dockerwarts-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme_grafana}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel
+      - GF_SERVER_ROOT_URL=http://grafana.dockerwarts.local
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./configs/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.dockerwarts.local`)"
+      - "traefik.http.routers.grafana.entrypoints=web"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ==========================================================================
+  # NODE EXPORTER - System Metrics for Prometheus
+  # ==========================================================================
+  node-exporter:
+    image: prom/node-exporter:v1.6.1
+    container_name: dockerwarts-node-exporter
+    restart: unless-stopped
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - backend
+
+  # ==========================================================================
+  # CADVISOR - Container Metrics for Prometheus
+  # ==========================================================================
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: dockerwarts-cadvisor
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - backend
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/24
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+volumes:
+  # Traefik
+  traefik-certs:
+    driver: local
+
+  # GLPI
+  glpi-db-data:
+    driver: local
+  glpi-data:
+    driver: local
+
+  # Elasticsearch
+  elasticsearch-master-data:
+    driver: local
+  elasticsearch-data-data:
+    driver: local
+  kibana-data:
+    driver: local
+
+  # Cassandra
+  cassandra-node1-data:
+    driver: local
+  cassandra-node2-data:
+    driver: local
+
+  # Grafana & Prometheus
+  grafana-data:
+    driver: local
+  prometheus-data:
+    driver: local

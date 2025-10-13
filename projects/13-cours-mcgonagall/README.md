@@ -99,7 +99,42 @@ Le timeout d'attente du planning après le login a été réduit à 1 minute (60
 > mets juste la date au format fr-FR
 
 **Réponse :**
-La génération de la date utilise désormais le format français JJ/MM/AAAA grâce à `toLocaleDateString('fr-FR')` dans le script `scraper.js`. L’URL du scraping est donc compatible avec le format attendu par le site.
+La génération de la date utilise désormais le format français JJ/MM/AAAA grâce à `toLocaleDateString('fr-FR')` dans le script `scraper.js`. L'URL du scraping est donc compatible avec le format attendu par le site.
+
+---
+
+### Prompt du 13/10/2025
+> tu dois fix tailwind, là les class sont pas utilisées
+
+**Réponse :**
+J'ai identifié et corrigé le problème avec Tailwind CSS v4. Les corrections apportées :
+
+1. **PostCSS Config** - Mise à jour de `postcss.config.js` :
+   ```javascript
+   export default {
+     plugins: {
+       '@tailwindcss/vite': {},
+       autoprefixer: {},
+     },
+   }
+   ```
+
+2. **Vite Config** - Ajout du plugin Tailwind dans `vite.config.js` :
+   ```javascript
+   import tailwindcss from '@tailwindcss/vite'
+   
+   export default defineConfig({
+     plugins: [react(), tailwindcss()],
+     // ...
+   })
+   ```
+
+3. **Installation** - Ajout de la dépendance manquante :
+   ```bash
+   npm install @tailwindcss/vite
+   ```
+
+Le problème venait de l'utilisation de Tailwind CSS v4 avec une configuration obsolète. Avec Tailwind v4, il faut utiliser `@tailwindcss/vite` au lieu de `@tailwindcss/postcss` et ajouter le plugin dans la configuration Vite.
 
 ---
 

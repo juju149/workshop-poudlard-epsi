@@ -1,0 +1,104 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# PyCharm
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Machine Learning
+# Modèles volumineux (dé-commenter si vous voulez les exclure)
+# *.bin
+# *.pt
+# *.pth
+# *.onnx
+# *.h5
+
+# Logs et métriques
+logs/
+runs/
+*.log
+mlruns/
+tensorboard/
+
+# Données
+# Exclut les données brutes volumineuses mais garde la structure
+data/raw/**/*.wav
+data/raw/**/*.mp3
+data/raw/**/*.flac
+data/processed/**/*.wav
+data/processed/**/*.mp3
+
+# Garde les fichiers .gitkeep pour préserver la structure
+!.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Archives
+*.zip
+*.tar.gz
+*.rar

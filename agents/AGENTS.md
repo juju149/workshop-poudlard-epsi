@@ -37,7 +37,7 @@ Chaque défi doit être :
 ## 📦 Structure type d’un projet
 
 ```
-services/<defi_nom>/
+projects/[numero]-[nom-raccourci]/
 ├── Dockerfile
 ├── docker-compose.snippet.yml
 ├── README.md
@@ -54,6 +54,8 @@ services/<defi_nom>/
 
 ### 📘 Règles :
 
+* **Convention de nommage :** `projects/[numero de defi]-[nom du defi raccourci avec mots séparés par des tirets]`
+  * Exemples : `14-boite-magique`, `16-wizard-quiz-app`
 * **`README.md`** → résumé technique et lancement rapide
 * **`docs/rendu.md`** → document final pour le jury
 * **`docs/prompts_used.md`** → tous les prompts IA utilisés
@@ -62,11 +64,41 @@ services/<defi_nom>/
 
 ---
 
-## 👤 Rôles des agents
+## � Liste des défis et noms de dossiers
+
+Voici la liste des défis avec leurs noms de dossiers proposés selon la convention `projects/[numero]-[nom-raccourci]` :
+
+1. **DOCKERWARTS** → `1-dockerwarts`
+2. **PRACADABRA** → `2-pracadabra`
+3. **CAPE D’INVISIBILITÉ** → `3-cape-dinvisibilite`
+4. **PROTEGO MAXIMA** → `4-protego-maxima`
+5. **CI/CD EXPRESS — VOIE 9¾** → `5-cicd-express-voie-974`
+6. **SPOOKEPSI** → `6-spookepsi`
+7. **HARRY POTTER 9?** → `7-harry-potter-9`
+8. **OÙ EST LA CHAMBRE DES SECRETS ?** → `8-chambre-des-secrets`
+9. **LE PATRONUS D’EPSI** → `9-patronus-epsi`
+10. **OCULUS REPARO** → `10-oculus-reparo`
+11. **LE COURS DE FILIUS FLITWICK** → `11-cours-filius-flitwick`
+12. **HARRY POTTER STARTER PACK** → `12-harry-potter-starter-pack`
+13. **ON N’AVAIT PAS COURS AVEC MCGONAGALL?** → `13-cours-mcgonagall`
+14. **LA BOITE MAGIQUE DE SERVERUS ROGUE** → `14-boite-magique`
+15. **HEDWIGE** → `15-hedwige`
+16. **"TU ES UN SORCIER, HARRY !"** → `16-wizard-quiz-app`
+17. **TABLEAU DES SCORES DE POUDLARD** → `17-tableau-scores-poudlard`
+18. **LE CADET DE VOTRE ÉCOLE** → `18-cadet-ecole`
+19. **PROFESSEUR DUMBLEDORE** → `19-professeur-dumbledore`
+20. **IS IT YOU HARRY?** → `20-is-it-you-harry`
+21. **LE NIMBUS 3000** → `21-nimbus-3000`
+22. **LE PROCÈS DE J.K. ROWLING** → `22-proces-jk-rowling`
+23. **EASTER EGGS** → `23-easter-eggs`
+
+---
+
+## �👤 Rôles des agents
 
 | Rôle                       | Objectif                                         | Dossier / Action          |
 | -------------------------- | ------------------------------------------------ | ------------------------- |
-| **Infrastructure Copilot** | Crée et maintient les Dockerfiles & Compose      | `/infra/` & `/services/*` |
+| **Infrastructure Copilot** | Crée et maintient les Dockerfiles & Compose      | `/infra/` & `/projects/*` |
 | **Documentation Copilot**  | Rédige les docs et standardise les rendus        | `/docs/`                  |
 | **Test Copilot**           | Gère les tests automatiques (smoke, integration) | `/tests/`                 |
 | **Prompt Copilot**         | Archive et reformule les prompts IA              | `/docs/prompts_used.md`   |
@@ -186,10 +218,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project: [dockerwarts_infra, pracadabra_pra, protego_maxima]
+        project: [1-dockerwarts, 2-pracadabra, 4-protego-maxima]
     steps:
       - uses: actions/checkout@v4
-      - run: bash services/${{ matrix.project }}/tests/test_smoke.sh
+      - run: bash projects/${{ matrix.project }}/tests/test_smoke.sh
 ```
 
 ---
@@ -200,7 +232,7 @@ jobs:
 | ----- | ------------------------ | ---------------------------- | ------ |
 | ✅     | Documentation complète   | `docs/rendu.md`              |        |
 | ✅     | Prompts IA archivés      | `docs/prompts_used.md`       |        |
-| ✅     | Dockerfile fonctionnel   | `services/<defi>/Dockerfile` |        |
+| ✅     | Dockerfile fonctionnel   | `projects/<numero>-<nom>/Dockerfile` |        |
 | ✅     | Compose testé            | `docker-compose.snippet.yml` |        |
 | ✅     | Tests automatisés        | `tests/test_smoke.sh`        |        |
 | ✅     | PRA et backup notés      | `docs/pra.md`                |        |
@@ -211,7 +243,7 @@ jobs:
 ## 📘 Exemple de projet complet
 
 ```
-services/hedwige_webapp/
+projects/15-hedwige/
 ├── Dockerfile
 ├── docker-compose.snippet.yml
 ├── README.md
@@ -238,24 +270,24 @@ services/hedwige_webapp/
 
 ```makefile
 up-%:
-	docker compose -f services/$*/docker-compose.snippet.yml up -d
+	docker compose -f projects/$*/docker-compose.snippet.yml up -d
 
 down-%:
-	docker compose -f services/$*/docker-compose.snippet.yml down -v
+	docker compose -f projects/$*/docker-compose.snippet.yml down -v
 
 test-%:
-	bash services/$*/tests/test_smoke.sh
+	bash projects/$*/tests/test_smoke.sh
 
 doc-%:
-	code services/$*/docs/rendu.md
+	code projects/$*/docs/rendu.md
 ```
 
 ### Exemples :
 
 ```bash
-make up-dockerwarts_infra
-make test-hedwige_webapp
-make doc-protego_maxima
+make up-1-dockerwarts
+make test-15-hedwige
+make doc-4-protego-maxima
 ```
 
 ---

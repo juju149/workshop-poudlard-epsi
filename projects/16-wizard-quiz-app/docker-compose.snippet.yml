@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  flutter_build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wizard_quiz_builder
+    volumes:
+      - ./src/wizard_quiz:/app
+      - ./build:/app/build
+    environment:
+      - FLUTTER_HOME=/opt/flutter
+      - ANDROID_SDK_ROOT=/opt/android-sdk
+    command: >
+      sh -c "
+        echo '🚀 Starting Flutter build...' &&
+        flutter pub get &&
+        flutter build apk --release &&
+        echo '✅ Build complete!' &&
+        echo '📦 APK location: /app/build/app/outputs/flutter-apk/app-release.apk' &&
+        ls -lh /app/build/app/outputs/flutter-apk/
+      "
+
+  # Optional: Web preview service
+  web_preview:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wizard_quiz_web
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src/wizard_quiz:/app
+    command: >
+      sh -c "
+        flutter pub get &&
+        flutter build web &&
+        cd build/web &&
+        python3 -m http.server 8080
+      "
+    depends_on:
+      - flutter_build

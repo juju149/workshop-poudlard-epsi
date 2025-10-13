@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log
+*.log
+.env
+*.db
+coverage/
+.DS_Store
+build/
+dist/
+.gradle/
+local.properties
+*.apk
+*.aab
+*.iml
+.idea/

@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Results (generated files)
+results/*.json
+
+# Keep the directory structure
+!results/.gitkeep

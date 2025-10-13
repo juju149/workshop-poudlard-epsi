@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  easter-eggs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: easter-eggs-stress-test
+    volumes:
+      - ./results:/app/results
+    environment:
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true

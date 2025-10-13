@@ -13,7 +13,7 @@ Créer un dataset audio de qualité pour entraîner un modèle de reconnaissance
 5. **Alohomora** - Sortilège d'ouverture
 6. **Expecto Patronum** - Invoque un patronus
 7. **Avada Kedavra** - Sort impardonnable
-8. **Stupefix** - Sortilège de stupéfixion
+8. **Stupefy** - Sortilège de stupéfixion
 9. **Protego** - Bouclier protecteur
 10. **Accio** - Sortilège d'attraction
 

@@ -1,0 +1,21 @@
+{
+  "name": "emploi-du-temps-electron",
+  "version": "1.0.0",
+  "description": "Application Electron pour emploi du temps avec scraping.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "electron",
+    "scraping",
+    "emploi du temps"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "electron": "^38.2.2",
+    "puppeteer": "^24.24.0"
+  }
+}

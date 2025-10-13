@@ -1,0 +1,110 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║              🧪 LA BOITE MAGIQUE DE SEVERUS ROGUE 🧪                        ║
+║                                                                              ║
+║              Challenge #14 - Cross-Platform Workshop Tool                   ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📦 PROJECT OVERVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+A cross-platform C++ tool built with CMake for collecting and archiving 
+workshop source files and documents. Works seamlessly on Linux and Windows.
+
+🎯 CORE FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Recursive directory scanning
+✓ File filtering by extensions
+✓ Archive creation with structure preservation
+✓ Statistics by file type
+✓ Cross-platform (Linux/Windows/macOS)
+✓ No external dependencies
+✓ CLI interface
+✓ Automatic exclusions (.git, build)
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+README.md         → Main documentation & quick start
+QUICKSTART.md     → Quick reference guide
+LIVRABLES.md      → Deliverables checklist
+docs/USAGE.md     → Detailed usage guide
+docs/TECHNICAL.md → Technical architecture & API
+
+🛠️ TECHNICAL STACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Language:  C++17
+Build:     CMake 3.15+
+Compilers: GCC 8+, Clang 9+, MSVC 2019+
+Libs:      std::filesystem (no external deps)
+
+🚀 QUICK START
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Linux/macOS:
+  ./build.sh
+  ./build/bin/magic-box --help
+
+Windows:
+  build.bat
+  .\build\bin\Release\magic-box.exe --help
+
+💡 USAGE EXAMPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Show statistics
+magic-box --stats
+
+# Archive C++ project
+magic-box -r ~/project -o ~/backup -e .cpp,.h,.hpp
+
+# Collect documentation
+magic-box -r ~/workshop -o ~/docs -e .md,.txt
+
+# Multi-language backup
+magic-box -e .cpp,.py,.js,.md -o ./archive
+
+📁 PROJECT STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+14-boite-magique/
+├── CMakeLists.txt         CMake configuration
+├── README.md              Main documentation
+├── QUICKSTART.md          Quick reference
+├── LIVRABLES.md          Deliverables
+├── build.sh              Linux build script
+├── build.bat             Windows build script
+├── demo.sh               Demo script
+├── docs/
+│   ├── USAGE.md          Detailed guide
+│   └── TECHNICAL.md      Technical docs
+├── include/
+│   └── MagicBox.h        C++ header
+└── src/
+    ├── main.cpp          Entry point
+    └── MagicBox.cpp      Implementation
+
+✅ DELIVERABLES STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Cross-platform binary (Linux/Windows)
+✓ CMakeLists.txt configuration
+✓ Complete source code
+✓ Usage documentation
+✓ Build scripts
+✓ Examples & demos
+✓ Technical documentation
+
+🎓 CHALLENGE INFO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Challenge:     #14 - La Boite Magique de Severus Rogue
+Workshop:      Poudlard à l'EPSI/WIS
+Story Points:  8
+Deadline:      16/10/2025
+Status:        ✅ COMPLETE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

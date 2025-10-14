@@ -68,7 +68,7 @@ const ScheduleGrid = () => {
   }, [currentWeekStart])
 
   // Fonction pour trouver le cours correspondant à un jour et une heure
-  // Amélioration : affiche le cours sur toute la plage horaire (ex: 9h-11h sur 9h, 10h, 11h)
+  // Amélioration : affiche le cours sur toute la plage horaire (ex: 9h-11h sur 9h et 10h, mais pas 11h)
   const getCourseForSlot = (dayIndex, timeSlot) => {
     if (!scheduleData || scheduleData.length === 0) return null
     const dayData = scheduleData[dayIndex]
@@ -85,7 +85,7 @@ const ScheduleGrid = () => {
         let endHour = parseInt(match[3], 10)
         // Si minutes présentes, on peut les utiliser mais ici on reste à l'heure pleine
         let slotHour = parseInt(timeSlot.split(':')[0], 10)
-        return slotHour >= startHour && slotHour <= endHour
+        return slotHour >= startHour && slotHour < endHour // < au lieu de <= pour exclure l'heure de fin
       }
       // Si le format est juste une heure, on compare directement
       return c.heure.startsWith(timeSlot)
@@ -195,25 +195,29 @@ const ScheduleGrid = () => {
                 const currentCourse = getCourseForSlot(dayIndex, time);
                 const previousCourse = getCourseForSlot(dayIndex, timeSlots[timeIndex - 1]);
                 
+                // Fusionner uniquement si les cours sont identiques ET consécutifs (pas de trou)
                 if (currentCourse && previousCourse &&
                     currentCourse.matiere === previousCourse.matiere &&
                     currentCourse.prof === previousCourse.prof &&
-                    currentCourse.salle === previousCourse.salle) {
+                    currentCourse.salle === previousCourse.salle &&
+                    currentCourse.heure === previousCourse.heure) { // Même plage horaire = consécutifs
                   return null; // Cette cellule est fusionnée avec la précédente
                 }
               }
               
-              // Calculer combien de créneaux ce cours occupe
+              // Calculer combien de créneaux ce cours occupe consécutivement
               const course = getCourseForSlot(dayIndex, time);
               let rowSpan = 1;
               
               if (course) {
+                // On compte les créneaux consécutifs avec le même cours (même plage horaire)
                 for (let j = timeIndex + 1; j < timeSlots.length; j++) {
                   const nextCourse = getCourseForSlot(dayIndex, timeSlots[j]);
                   if (nextCourse &&
                       nextCourse.matiere === course.matiere &&
                       nextCourse.prof === course.prof &&
-                      nextCourse.salle === course.salle) {
+                      nextCourse.salle === course.salle &&
+                      nextCourse.heure === course.heure) { // Même plage horaire = même bloc de cours
                     rowSpan++;
                   } else {
                     break;

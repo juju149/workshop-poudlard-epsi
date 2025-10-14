@@ -85,12 +85,9 @@ async function scrapeSchedule(date = null) {
   });
 
   await browser.close();
+  console.log(result);
   
   return result;
 }
 
 export { scrapeSchedule };
-
-// Utilisation : node scraper.js 10/13/2025
-const inputDate = process.argv[2];
-scrapeSchedule(inputDate);

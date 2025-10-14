@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react'
 
 const ScheduleGrid = () => {
+  // Changer de semaine
+  const changeWeek = (offset) => {
+    if (!currentWeekStart) return;
+    const newMonday = new Date(currentWeekStart);
+    newMonday.setDate(currentWeekStart.getDate() + offset * 7);
+    setCurrentWeekStart(newMonday);
+  }
   const [scheduleData, setScheduleData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -32,13 +39,12 @@ const ScheduleGrid = () => {
       setError(null)
       
       // Formater la date du lundi au format JJ/MM/AAAA
-      const mondayFormatted = currentWeekStart.toLocaleDateString('fr-FR')
-      
+      const mondayFormatted = currentWeekStart.toLocaleDateString('en-US');
       // Vérifier si on est dans Electron
       if (window.electronAPI && window.electronAPI.getSchedule) {
         // Mode Electron - Utiliser l'IPC
-        const result = await window.electronAPI.getSchedule(mondayFormatted)
-        
+        const result = await window.electronAPI.getSchedule(mondayFormatted);
+
         if (result.success) {
           setScheduleData(result.data)
         } else {
@@ -114,7 +120,13 @@ const ScheduleGrid = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="mb-4 flex justify-between items-center">
+      <div className="mb-4 flex justify-center items-center gap-4">
+        <button
+          onClick={() => changeWeek(-1)}
+          className="px-3 py-2 bg-purple-200 text-purple-800 rounded-lg hover:bg-purple-300 transition-colors"
+        >
+          ←
+        </button>
         <h2 className="text-2xl font-bold text-purple-800">
           {(() => {
             if (!currentWeekStart) return '';
@@ -124,11 +136,11 @@ const ScheduleGrid = () => {
             return `Semaine du ${lundi.toLocaleDateString('fr-FR')} au ${vendredi.toLocaleDateString('fr-FR')}`;
           })()}
         </h2>
-        <button 
-          onClick={loadSchedule}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        <button
+          onClick={() => changeWeek(1)}
+          className="px-3 py-2 bg-purple-200 text-purple-800 rounded-lg hover:bg-purple-300 transition-colors"
         >
-          🔄 Actualiser
+          →
         </button>
       </div>
 

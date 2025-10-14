@@ -206,6 +206,32 @@ const getCourseForSlot = (dayIndex, timeSlot) => {
   })
 }
 ```
+---
+
+### Prompt du 14/10/2025
+> Ajoute les boutons pour changer les semaines à gauche et à droite de "semaine du XXX au XXX" et supprime le bouton Actualiser
+
+**Réponse :**
+Les boutons ← et → ont été ajoutés de part et d'autre du titre de la semaine. Le bouton "Actualiser" a été supprimé. La navigation entre les semaines déclenche le scraping pour la nouvelle semaine.
+
+---
+
+### Prompt du 14/10/2025
+> Le scraping ne semble pas se déclencher lors du changement de semaine
+
+**Réponse :**
+Le scraping est bien déclenché à chaque changement de semaine grâce au hook `useEffect(() => { loadSchedule() }, [currentWeekStart])`. À chaque navigation, la date du lundi change et le scrapper est appelé via l'API Electron.
+
+---
+
+### Prompt du 14/10/2025
+> Ajoute tout ça au readme
+
+**Réponse :**
+Toutes les modifications et prompts sont ajoutés ici pour la traçabilité. Les fonctionnalités de navigation, scraping dynamique, affichage des cours, gestion des erreurs et formatage sont documentées.
+
+---
+
 ## Installation
 
 ```bash

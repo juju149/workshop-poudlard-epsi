@@ -254,15 +254,15 @@ const ScheduleGrid = () => {
                           // On récupère l'heure de début du premier créneau
                           const startTime = time;
                           // On calcule l'heure de fin en fonction du rowSpan
-                          const endTimeIndex = timeIndex + (rowSpan - 1);
-                          const endTime = timeSlots[endTimeIndex];
+                          const endTimeIndex = timeIndex + rowSpan; // +rowSpan au lieu de +(rowSpan-1)
+                          const endTime = timeSlots[endTimeIndex] || '18:00'; // Ou 18:00 si on dépasse
                           return `${startTime}-${endTime}`;
                         })()}
                       </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center text-gray-400 text-sm h-full">
-                      Libre
+                      {time !== '18:00' && 'Libre'}
                     </div>
                   )}
                 </div>

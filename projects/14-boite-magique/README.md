@@ -275,29 +275,60 @@ Ce projet est développé dans le cadre du Workshop EPSI/WIS 2025.
 
 ---
 
-## 🗒️ Historique des prompts utilisateur
+---
 
-Voici tous les prompts envoyés à GitHub Copilot durant le développement :
+## Historique complet des échanges
 
-quand j'archive, c'est envoyé où ?
-Okay alors maintenant on va push l'archive sur github
-nan mais de manière automatique, tu vas ajouter une option à la CLI avec un lien github et tu prends mes credentials de git config
-J'aimerais pouvoir l'envoyer dans un dossier spécifique sur mon repo github
-si le dossier existe pas il va être créé ?
-❌ Error: Failed to push to GitHub: filesystem error: in rename: Invalid argument ["./archive-magique/archives"] ["./archive-magique/archives/2025-10-14/archives"]
-Ajoute une option pour push sur une branche choisie qui existe ou pas
-/Users/tweenty/Desktop/workshop-poudlard-epsi/projects/14-boite-magique/src/MagicBox.cpp:145:16: error: out-of-line definition of 'pushToGitHub' does not match any declaration in 'MagicBox'
-🚀 Pushing to GitHub...
-⚠️  Push output: error: src refspec main does not match any
-error: failed to push some refs to 'https://github.com/juju149/workshop-poudlard-epsi.git'
-error: src refspec master does not match any
-error: failed to push some refs to 'https://github.com/juju149/workshop-poudlard-epsi.git'
-✅ Successfully pushed to GitHub!
-🌐 View your archive at: https://github.com/juju149/workshop-poudlard-epsi.git
-ajoute tous les prompts que je t'ai fait à la fin du readme
-⚠️  Push output: error: src refspec ma-branche-speciale does not match any
-error: failed to push some refs to 'https://github.com/juju149/workshop-poudlard-epsi.git'
-Tu m'ajoutes l'historique des prompts au readme avec la solution
+**Prompt 1 :** comment j'exécute ce ficier  
+**Réponse :** J'ai expliqué comment rendre le script `build.sh` exécutable avec `chmod +x build.sh` et comment l'exécuter avec `./build.sh`. J'ai aussi corrigé une erreur de compilation liée à `stdc++fs` sur macOS en modifiant le CMakeLists.txt pour exclure cette bibliothèque sur macOS.
+
+**Prompt 2 :** quand j'archive, c'est envoyé où ?  
+**Réponse :** J'ai testé l'archivage et montré que par défaut les archives sont créées dans `./workshop-archive`, avec possibilité de personnaliser via l'option `-o`. J'ai donné des exemples pratiques d'utilisation avec différents emplacements.
+
+**Prompt 3 :** Okay alors maintenant on va push l'archive sur github  
+**Réponse :** J'ai commencé à vérifier l'état git du projet pour préparer le push vers GitHub.
+
+**Prompt 4 :** nan mais de manière automatique, tu vas ajouter une option à la CLI avec un lien github et tu prends mes credentials de git config  
+**Réponse :** J'ai ajouté l'option `--github <url>` à la CLI, créé la méthode `pushToGitHub()` qui récupère automatiquement les credentials git avec `git config --global user.name` et `user.email`, et implémente le workflow complet : init git, commit, et push vers GitHub.
+
+**Prompt 5 :** J'aimerais pouvoir l'envoyer dans un dossier spécifique sur mon repo github  
+**Réponse :** J'ai ajouté l'option `--github-folder <dossier>` pour spécifier un dossier cible dans le repo GitHub. La logique déplace le contenu de l'archive dans le dossier spécifié avant le commit/push.
+
+**Prompt 6 :** si le dossier existe pas il va être créé ?  
+**Réponse :** Oui, j'ai confirmé que `fs::create_directories()` crée automatiquement le dossier et ses parents s'ils n'existent pas.
+
+**Prompt 7 :** ❌ Error: Failed to push to GitHub: filesystem error: in rename: Invalid argument  
+**Réponse :** J'ai corrigé l'erreur de déplacement de dossiers en affinant la logique pour éviter de déplacer un dossier dans lui-même, puis en utilisant une copie récursive au lieu d'un déplacement pour les dossiers.
+
+**Prompt 8 :** Ajoute une option pour push sur une branche choisie qui existe ou pas  
+**Réponse :** J'ai ajouté l'option `--github-branch <nom>` qui crée automatiquement la branche si elle n'existe pas avec `git checkout -b`, et adapté la commande de push pour utiliser la branche spécifiée.
+
+**Prompt 9 :** /Users/tweenty/.../MagicBox.cpp:145:16: error: out-of-line definition of 'pushToGitHub' does not match any declaration  
+**Réponse :** J'ai corrigé l'erreur de compilation en ajustant la signature de la méthode `pushToGitHub` dans le fichier .cpp pour inclure le paramètre `githubBranch`.
+
+**Prompt 10 :** 🚀 Pushing to GitHub... ⚠️ Push output: error: src refspec main does not match any  
+**Réponse :** J'ai corrigé la commande de push pour utiliser la branche spécifiée par `--github-branch` au lieu d'essayer main/master par défaut.
+
+**Prompt 11 :** ajoute tous les prompts que je t'ai fait à la fin du readme  
+**Réponse :** J'ai ajouté une section "Historique des prompts utilisateur" avec tous vos prompts et un exemple d'utilisation CLI complète.
+
+**Prompt 12 :** ⚠️ Push output: error: src refspec ma-branche-speciale does not match any  
+**Réponse :** J'ai ajouté une vérification pour forcer un commit vide si aucun commit n'existe sur la branche, garantissant que la branche peut être poussée.
+
+**Prompt 13 :** Tu m'ajoutes l'historique des prompts au readme avec la solution  
+**Réponse :** J'ai ajouté l'historique complet et la solution CLI finale avec exemples d'utilisation.
+
+**Prompt 14 :** On peut pas debug ?  
+**Réponse :** J'ai ajouté des messages de debug détaillés pour tracer l'état git, les résultats de commit, et identifier pourquoi le push échouait.
+
+**Prompt 15 :** Je veux que tu commit l'archive en gros logique  
+**Réponse :** J'ai corrigé l'ordre des opérations : initialiser git → déplacer fichiers → ajouter fichiers → créer branche → commiter → pousser, pour que l'archive soit effectivement commitée.
+
+**Prompt 16 :** Okay tout est parfait sauf que ça écrase tout et le met pas dans le github folder spécifié  
+**Réponse :** J'ai complètement revu la logique pour cloner le repo existant d'abord, puis ajouter les fichiers dans le dossier spécifié, évitant ainsi d'écraser le contenu existant du repo.
+
+**Prompt 17 :** ❌ Error: Failed to push to GitHub: filesystem error: No such file or directory  
+**Réponse :** J'ai corrigé l'erreur de chemin en stockant le chemin absolu de l'archive dès le début, avant tout changement de répertoire de travail.
 
 ---
 

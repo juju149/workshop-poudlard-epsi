@@ -272,3 +272,62 @@ Modification du positionnement des heures :
 - Optimisation de l'alignement avec la grille
 
 ---
+
+### Prompt du 14/10/2025
+> Regarde la grille, les cases sont pas alignées avec les lignes du coup tout est décalé de quelques millimètres
+
+**Réponse :**
+Correction de l'alignement de la grille :
+- Ajustement du positionnement des lignes horizontales : `top: ${48 + (index * 60)}px` au lieu de `(index + 1) * 60px`
+- Suppression des marges qui causaient le décalage (`marginTop: '1px'` et `minHeight: '59px'`)
+- Hauteur exacte des cellules à `60px` et `rowSpan * 60px` pour les cours fusionnés
+- Alignement parfait des cases avec les lignes de la grille
+
+---
+
+### Prompt du 14/10/2025
+> Enfin, si on a cours de 11h à 13h puis de 14h à 17h, il me faut bien une heure de trou entre les 2 et il ne faut pas joindre tous les cours sur un seul cours si c'est le cas aussi, actuellement ça le fait (très bien pour le même cours coupé en plusieurs heures garde le dans ce cas)
+
+**Réponse :**
+Correction de la logique de fusion des cours :
+- Ajout d'une vérification supplémentaire : `currentCourse.heure === previousCourse.heure`
+- Les cours ne sont fusionnés que s'ils font partie du même bloc horaire continu
+- Un cours de 11h-13h reste un seul bloc
+- Un cours de 14h-17h reste un autre bloc séparé
+- Même matière/prof/salle mais avec pause = deux blocs distincts
+
+---
+
+### Prompt du 14/10/2025
+> Il y a aussi le problème qu'ils s'arrêtent une ligne trop bas, tous les cours, quand on dit 13h ça va à 14h
+
+**Réponse :**
+Correction de l'inclusion des heures de fin :
+- Changement de la condition dans `getCourseForSlot` : `slotHour < endHour` au lieu de `slotHour <= endHour`
+- Un cours de 11h-13h s'affiche maintenant uniquement sur 11h et 12h (pas 13h)
+- Un cours de 14h-17h s'affiche sur 14h, 15h et 16h (pas 17h)
+- Les heures de fin correspondent désormais à l'heure réelle de fin du cours
+
+---
+
+### Prompt du 14/10/2025
+> Dans le texte des cours il manque toujours 1h à la fin du cours
+
+**Réponse :**
+Correction de l'affichage de l'heure de fin dans le texte :
+- Changement du calcul : `timeIndex + rowSpan` au lieu de `timeIndex + (rowSpan - 1)`
+- L'heure de fin affichée correspond maintenant au créneau suivant le dernier créneau occupé
+- Exemple : cours de 11h à 13h occupant 2 créneaux (11h et 12h) → affiche "11:00-13:00" ✅
+
+---
+
+### Prompt du 14/10/2025
+> Nickel, sur la ligne de 18h tu dois pas afficher "libre" comme en théorie on finit à 18h et que la ligne est au dessus
+
+**Réponse :**
+Masquage du texte "Libre" pour le créneau de 18h :
+- Ajout de la condition : `{time !== '18:00' && 'Libre'}`
+- La cellule de 18h reste vide car c'est la fin de la journée
+- Plus logique visuellement puisque les cours se terminent à 18h maximum
+
+---

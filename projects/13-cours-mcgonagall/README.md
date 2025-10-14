@@ -101,6 +101,37 @@ Le timeout d'attente du planning après le login a été réduit à 1 minute (60
 **Réponse :**
 La génération de la date utilise désormais le format français JJ/MM/AAAA grâce à `toLocaleDateString('fr-FR')` dans le script `scraper.js`. L'URL du scraping est donc compatible avec le format attendu par le site.
 
+## Tests ajoutés et modifications récentes
+
+J'ai ajouté des tests unitaires pour `scraper.js` et effectué quelques ajustements pour que le fichier soit testable sous Jest :
+
+- Nouveau fichier de tests : `src/__tests__/scraper.test.js`
+  - Couvre deux scénarios principaux :
+    - Cas "heureux" : la page contient des éléments `.Jour` et `.Case` ; la fonction retourne la structure attendue.
+    - Flux de login : le formulaire de connexion est détecté et l'attente du planning (`.Jour`) peut timeout — le test vérifie que le comportement d'erreur est bien déclenché.
+- Mock Puppeteer : les tests mockent `puppeteer.launch()` et la page (méthodes `goto`, `$`, `waitForSelector`, `evaluate`, etc.) pour éviter d'ouvrir un vrai navigateur.
+- Mise à jour de `scraper.js` : pour éviter une erreur de parsing avec `import.meta` dans l'environnement de test (Jest), le calcul de `__filename`/`__dirname` utilise maintenant un accès sécurisé à `import.meta.url` (via `eval`) avec un fallback sur `process.cwd()` lorsque nécessaire.
+- `src/__tests__/setup.js` contient déjà un mock global de `process.exit` pour empêcher l'arrêt du process pendant les tests.
+
+Comment lancer les tests
+
+Dans le répertoire du projet, exécuter :
+
+```bash
+npm test
+```
+
+ou pour exécuter Jest directement (parfois utile pour debug) :
+
+```bash
+npx jest --runInBand
+```
+
+Notes
+
+- Les tests pour l'UI React (`src/__tests__/App.test.jsx`, `ScheduleGrid.test.jsx`) peuvent générer quelques warnings liés aux effets asynchrones pendant le rendu — c'est indépendant des nouveaux tests du scraper mais utile à garder en tête lors du debug.
+- Si tu veux que je m'occupe d'augmenter encore la couverture du scraper (p.ex. en simulant plus de variations d'HTML), dis-moi quelles branches/conditions tu veux prioriser et j'ajouterai d'autres tests.
+
 ---
 
 ### Prompt du 13/10/2025

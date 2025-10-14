@@ -1,0 +1,69 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code (Airbnb)
+        run: npm run lint
+
+      - name: Run unit tests (Jest)
+        run: npm test
+
+      - name: Build project (Vite/Electron)
+        run: npm run build
+
+  docker-test:
+    runs-on: ubuntu-latest
+    needs: build-test-lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t my-app .
+
+      - name: Test Docker image
+        run: docker run --rm my-app npm test
+
+  sonarqube:
+    runs-on: ubuntu-latest
+    needs: build-test-lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2.0.2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [docker-test, sonarqube]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # Ajoute ici ton étape de déploiement (ex: vers Vercel, Heroku, serveur SSH, etc.)
+      - name: Deploy
+        run: echo "✅ Pipeline CI/CD terminé avec succès, aucune étape de déploiement requise."

@@ -1,13 +1,29 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { readFileSync, existsSync } from 'fs';
 import { scrapeSchedule } from './scraper.js';
 
-config();
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const isDev = process.env.NODE_ENV === 'development';
+
+// Charger .env manuellement pour compatibilité avec asar
+const envPath = join(__dirname, '.env');
+if (existsSync(envPath)) {
+  const envContent = readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const match = line.match(/^([^=:#]+)=(.*)$/);
+    if (match) {
+      const key = match[1].trim();
+      const value = match[2].trim().replace(/^["']|["']$/g, '');
+      process.env[key] = value;
+    }
+  });
+  console.log('✅ .env chargé avec succès');
+} else {
+  console.warn('⚠️ Fichier .env non trouvé');
+}
 
 // Gérer la récupération de l'emploi du temps
 ipcMain.handle('get-schedule', async (event, date) => {
@@ -35,11 +51,12 @@ function createWindow() {
 
   // En développement, charge le serveur Vite
   // En production, charge les fichiers buildés
-  if (isDev) {
-    win.loadURL('http://localhost:3002');
-  } else {
-    win.loadFile(join(__dirname, 'dist/index.html'));
-  }
+    if (isDev) {
+      win.loadURL('http://localhost:3002');
+      win.webContents.openDevTools();
+    } else {
+      win.loadFile(join(__dirname, 'dist', 'index.html'));
+    }
 }
 
 app.whenReady().then(createWindow);

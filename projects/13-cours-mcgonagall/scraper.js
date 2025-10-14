@@ -1,10 +1,61 @@
-import { config } from 'dotenv';
 import puppeteer from 'puppeteer';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { readFileSync, existsSync } from 'fs';
 
-config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Charger .env si ce n'est pas déjà fait (pour compatibilité avec asar)
+const envPath = join(__dirname, '.env');
+if (existsSync(envPath) && !process.env.USERNAME) {
+  const envContent = readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const match = line.match(/^([^=:#]+)=(.*)$/);
+    if (match) {
+      const key = match[1].trim();
+      const value = match[2].trim().replace(/^["']|["']$/g, '');
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  });
+}
+
+// Trouve le chemin de Chrome/Chromium sur le système
+function findChrome() {
+  const paths = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser'
+  ];
+  
+  for (const path of paths) {
+    try {
+      execSync(`test -f "${path}"`, { stdio: 'ignore' });
+      return path;
+    } catch (e) {
+      // Continue
+    }
+  }
+  
+  // Si aucun Chrome trouvé, utiliser celui de Puppeteer
+  return null;
+}
 
 async function scrapeSchedule(date = null) {
-  const browser = await puppeteer.launch({ headless: true });
+  const chromePath = findChrome();
+  const launchOptions = { 
+    headless: false,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  };
+  
+  if (chromePath) {
+    launchOptions.executablePath = chromePath;
+  }
+  
+  const browser = await puppeteer.launch(launchOptions);
   let result;
   try {
     const page = await browser.newPage();

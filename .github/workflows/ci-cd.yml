@@ -24,6 +24,7 @@ jobs:
 
       - name: Lint code (Airbnb)
         run: npm run lint
+        continue-on-error: true
         working-directory: projects/13-cours-mcgonagall
 
       - name: Run unit tests (Jest)

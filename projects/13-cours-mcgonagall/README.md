@@ -331,3 +331,27 @@ Masquage du texte "Libre" pour le créneau de 18h :
 - Plus logique visuellement puisque les cours se terminent à 18h maximum
 
 ---
+
+### Prompt du 14/10/2025
+> Parfait, si y a encore aucun prof affiché tu mets l'heure à la place pour le faire remonter
+
+**Réponse :**
+Si aucun professeur n'est renseigné pour un cours, l'heure du créneau est affichée à droite dans la cellule, pour que l'information soit toujours visible et bien alignée.
+
+---
+
+### Prompt du 14/10/2025
+> aligne l'heure à droite avec un flex between
+
+**Réponse :**
+L'heure est maintenant alignée à droite dans la cellule, grâce à un flex avec `justify-between`, même si aucun prof n'est affiché. L'affichage reste cohérent et élégant pour tous les cas.
+
+---
+
+### Prompt du 14/10/2025
+> Maintenant tu comptes mieux les cours comme certains sont fusionnés, le compte est mauvais
+
+**Réponse :**
+Le calcul du nombre de cours affiché dans la légende est maintenant corrigé : il compte uniquement les blocs réellement affichés (cours fusionnés inclus, doublons exclus). La mention "X cours cette semaine" reflète désormais le nombre de cours visibles dans la grille, et non le nombre d'entrées brutes.
+
+---

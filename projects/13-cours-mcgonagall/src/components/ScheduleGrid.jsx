@@ -190,37 +190,105 @@ const ScheduleGrid = () => {
             
             {/* Cellules pour chaque jour */}
             {daysOfWeek.map((day, dayIndex) => {
-              // Ne pas afficher si cette cellule fait partie d'un cours fusionné précédent
-              if (timeIndex > 0) {
-                const currentCourse = getCourseForSlot(dayIndex, time);
-                const previousCourse = getCourseForSlot(dayIndex, timeSlots[timeIndex - 1]);
+              const course = getCourseForSlot(dayIndex, time);
+              const currentSlotHour = parseInt(time.split(':')[0], 10);
+              
+              // Vérifier si ce créneau est déjà occupé par un cours précédent (partie d'un cours multi-créneaux)
+              if (course) {
+                const courseMatch = course.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/);
+                const courseStartHour = courseMatch ? parseInt(courseMatch[1], 10) : null;
                 
-                // Fusionner uniquement si les cours sont identiques ET consécutifs (pas de trou)
-                if (currentCourse && previousCourse &&
-                    currentCourse.matiere === previousCourse.matiere &&
-                    currentCourse.prof === previousCourse.prof &&
-                    currentCourse.salle === previousCourse.salle &&
-                    currentCourse.heure === previousCourse.heure) { // Même plage horaire = consécutifs
-                  return null; // Cette cellule est fusionnée avec la précédente
+                // Si le cours actuel ne commence pas à ce créneau, c'est qu'il est déjà affiché plus haut
+                if (courseStartHour !== null && currentSlotHour > courseStartHour) {
+                  return <div key={`${day}-${time}`} className="hidden" />;
                 }
               }
               
-              // Calculer combien de créneaux ce cours occupe consécutivement
-              const course = getCourseForSlot(dayIndex, time);
+              // Vérifier si ce cours est une suite d'un cours identique précédent (fusion de cours consécutifs)
+              if (course && timeIndex > 0) {
+                const courseMatch = course.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/);
+                const courseStartHour = courseMatch ? parseInt(courseMatch[1], 10) : null;
+                
+                // Chercher un cours identique dans les créneaux précédents qui se termine exactement quand celui-ci commence
+                if (courseStartHour !== null) {
+                  for (let prevIndex = 0; prevIndex < timeIndex; prevIndex++) {
+                    const prevCourse = getCourseForSlot(dayIndex, timeSlots[prevIndex]);
+                    if (prevCourse &&
+                        prevCourse.matiere === course.matiere &&
+                        prevCourse.prof === course.prof &&
+                        prevCourse.salle === course.salle) {
+                      
+                      const prevMatch = prevCourse.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/);
+                      const prevEndHour = prevMatch ? parseInt(prevMatch[3], 10) : null;
+                      
+                      // Si le cours précédent se termine exactement quand celui-ci commence
+                      if (prevEndHour === courseStartHour) {
+                        return <div key={`${day}-${time}`} className="hidden" />;
+                      }
+                    }
+                  }
+                }
+              }
+              
+              // Calculer combien de créneaux ce cours occupe (y compris les cours fusionnés)
               let rowSpan = 1;
+              let displayEndTime = null;
               
               if (course) {
-                // On compte les créneaux consécutifs avec le même cours (même plage horaire)
-                for (let j = timeIndex + 1; j < timeSlots.length; j++) {
-                  const nextCourse = getCourseForSlot(dayIndex, timeSlots[j]);
-                  if (nextCourse &&
-                      nextCourse.matiere === course.matiere &&
-                      nextCourse.prof === course.prof &&
-                      nextCourse.salle === course.salle &&
-                      nextCourse.heure === course.heure) { // Même plage horaire = même bloc de cours
-                    rowSpan++;
-                  } else {
-                    break;
+                const match = course.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/);
+                if (match) {
+                  const startHour = parseInt(match[1], 10);
+                  const endHour = parseInt(match[3], 10);
+                  rowSpan = endHour - startHour;
+                  displayEndTime = endHour;
+                  
+                  // Chercher les cours identiques qui suivent directement
+                  const dayData = scheduleData[dayIndex];
+                  if (dayData && dayData.cours) {
+                    const allCourses = [...dayData.cours].sort((a, b) => {
+                      const aMatch = a.heure.match(/(\d{1,2})[h:]?/);
+                      const bMatch = b.heure.match(/(\d{1,2})[h:]?/);
+                      const aHour = aMatch ? parseInt(aMatch[1], 10) : 0;
+                      const bHour = bMatch ? parseInt(bMatch[1], 10) : 0;
+                      return aHour - bHour;
+                    });
+                    
+                    // Trouver le cours actuel dans la liste
+                    const currentIndex = allCourses.findIndex(c => 
+                      c.matiere === course.matiere && 
+                      c.prof === course.prof && 
+                      c.salle === course.salle &&
+                      c.heure === course.heure
+                    );
+                    
+                    // Vérifier les cours suivants pour fusion
+                    let currentEndHour = endHour;
+                    for (let i = currentIndex + 1; i < allCourses.length; i++) {
+                      const nextCourse = allCourses[i];
+                      const nextMatch = nextCourse.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/);
+                      
+                      if (nextMatch &&
+                          nextCourse.matiere === course.matiere &&
+                          nextCourse.prof === course.prof &&
+                          nextCourse.salle === course.salle) {
+                        
+                        const nextStartHour = parseInt(nextMatch[1], 10);
+                        const nextEndHour = parseInt(nextMatch[3], 10);
+                        
+                        // Vérifier si le cours suivant commence exactement quand le précédent se termine
+                        if (nextStartHour === currentEndHour) {
+                          rowSpan += (nextEndHour - nextStartHour);
+                          currentEndHour = nextEndHour;
+                          displayEndTime = nextEndHour;
+                        } else {
+                          // Il y a un trou, arrêter la fusion
+                          break;
+                        }
+                      } else {
+                        // Cours différent, arrêter
+                        break;
+                      }
+                    }
                   }
                 }
               }
@@ -242,22 +310,18 @@ const ScheduleGrid = () => {
                   {course ? (
                     <div className="text-sm">
                       <div className="font-bold text-purple-900">{course.matiere}</div>
-                      <div className="text-purple-700 text-xs mt-1">{
-                        course.prof
-                          .split(' ')
-                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                          .join(' ')
-                      }</div>
-                      <div className="text-purple-600 text-xs">{course.salle}</div>
-                      <div className="text-gray-500 text-xs mt-1">
-                        {(() => {
-                          // On récupère l'heure de début du premier créneau
-                          const startTime = time;
-                          // On calcule l'heure de fin en fonction du rowSpan
-                          const endTimeIndex = timeIndex + rowSpan; // +rowSpan au lieu de +(rowSpan-1)
-                          const endTime = timeSlots[endTimeIndex] || '18:00'; // Ou 18:00 si on dépasse
-                          return `${startTime}-${endTime}`;
-                        })()}
+                      <div className="flex items-center justify-between text-xs mt-1">
+                        <span className="text-purple-700">{
+                          course.prof
+                            .split(' ')
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ')
+                        }</span>
+                        <span className="text-purple-600">{course.salle}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-gray-500 text-xs mt-1">
+                        <span></span>
+                        <span>{time}-{displayEndTime ? `${displayEndTime}:00` : timeSlots[timeIndex + rowSpan] || '18:00'}</span>
                       </div>
                     </div>
                   ) : (
@@ -275,11 +339,43 @@ const ScheduleGrid = () => {
       {/* Légende */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <h3 className="text-lg font-semibold text-gray-700 mb-2">📖 Informations</h3>
-        <p className="text-gray-600">
-          {scheduleData.length > 0 
-            ? `${scheduleData.reduce((total, day) => total + (day.cours?.length || 0), 0)} cours cette semaine`
-            : 'Aucun cours cette semaine'}
-        </p>
+          <p className="text-gray-600">
+            {(() => {
+              if (!scheduleData || scheduleData.length === 0) return 'Aucun cours cette semaine';
+              let count = 0;
+              daysOfWeek.forEach((_, dayIndex) => {
+                let lastEndHour = null;
+                let lastCourse = null;
+                for (let i = 0; i < timeSlots.length; i++) {
+                  const course = getCourseForSlot(dayIndex, timeSlots[i]);
+                  if (course) {
+                    // Extraire les heures de début et fin
+                    const match = course.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/);
+                    const startHour = match ? parseInt(match[1], 10) : null;
+                    const endHour = match ? parseInt(match[3], 10) : null;
+                    // Si ce cours commence à ce créneau et n'est pas une suite directe d'un cours identique
+                    if (startHour !== null && parseInt(timeSlots[i].split(':')[0], 10) === startHour) {
+                      if (
+                        !lastCourse ||
+                        course.matiere !== lastCourse.matiere ||
+                        course.prof !== lastCourse.prof ||
+                        course.salle !== lastCourse.salle ||
+                        (lastEndHour !== startHour)
+                      ) {
+                        count++;
+                      }
+                      lastCourse = course;
+                      lastEndHour = endHour;
+                    }
+                  } else {
+                    lastCourse = null;
+                    lastEndHour = null;
+                  }
+                }
+              });
+              return `${count} cours cette semaine`;
+            })()}
+          </p>
       </div>
     </div>
   )

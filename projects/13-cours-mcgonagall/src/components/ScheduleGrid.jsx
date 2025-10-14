@@ -155,11 +155,10 @@ const ScheduleGrid = () => {
                 position: 'absolute',
                 left: 0,
                 right: 0,
-                top: `${(index + 1) * 60}px`, // +1 car on commence après les en-têtes
-                marginTop: '-1px', // Pour compenser la bordure
+                top: `${48 + (index * 60)}px`, // 48px pour l'en-tête + index * 60px pour chaque ligne
               }}
             >
-              <span className="absolute -top-4 left-3 text-xs text-gray-500">{time}</span>
+              <span className="absolute top-1 left-3 text-xs text-gray-500">{time}</span>
             </div>
           ))}
         </div>
@@ -227,9 +226,8 @@ const ScheduleGrid = () => {
                   key={`${day}-${time}`}
                   style={{
                     gridRow: rowSpan > 1 ? `span ${rowSpan}` : undefined,
-                    minHeight: course ? '59px' : '0px', // 60px - 1px pour l'alignement avec les lignes
+                    height: course ? `${rowSpan * 60}px` : '60px',
                     zIndex: 1,
-                    marginTop: '1px' // Pour aligner avec la ligne
                   }}
                   className={`relative p-3 mx-1 rounded-lg transition-colors duration-200 ${
                     course

@@ -239,3 +239,36 @@ La date du lundi utilisée pour le scraping est maintenant formatée en "en-US" 
 L'option headless est maintenant passée à true pour Puppeteer dans le fichier `scraper.js`. Le navigateur ne s'affichera plus lors du scraping.
 
 ---
+### Prompt du 14/10/2025
+> applique le code
+
+**Réponse :**
+Implémentation de la fusion des cours consécutifs identiques dans la grille :
+- Ajout de la détection des cours identiques consécutifs
+- Utilisation de `rowSpan` pour fusionner les cellules
+- Gestion des espaces entre les cours non consécutifs
+- Alignement précis avec les lignes horaires
+
+---
+
+### Prompt du 14/10/2025
+> Nickel juste tu modifies l'affichage des heures par exemple quand le cours fait 11h 13h puis 14h 16h il me faut bien un trou entre 13h et 14h là j'en ai pas
+
+**Réponse :**
+Correction de l'affichage des plages horaires :
+- Modification de la condition dans `getCourseForSlot` pour exclure l'heure de fin
+- Utilisation directe de `course.heure` pour afficher les horaires exacts
+- Création d'espaces visuels entre les cours non consécutifs
+
+---
+
+### Prompt du 14/10/2025
+> Marque l'heure sous la ligne plutôt
+
+**Réponse :**
+Modification du positionnement des heures :
+- Déplacement des indicateurs horaires sous les lignes
+- Ajustement de l'espacement pour une meilleure lisibilité
+- Optimisation de l'alignement avec la grille
+
+---

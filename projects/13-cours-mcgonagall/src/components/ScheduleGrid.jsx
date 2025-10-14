@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 const ScheduleGrid = () => {
   // Changer de semaine
@@ -31,41 +31,54 @@ const ScheduleGrid = () => {
   }, [])
 
   // Charger les données de l'emploi du temps via Electron IPC
-  const loadSchedule = async () => {
+  // Utilise une ref isMounted pour protéger les setState et expose loadSchedule
+  // via useCallback pour que le bouton "Réessayer" et les tests puissent l'appeler.
+  const isMountedRef = useRef(true)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  const loadSchedule = useCallback(async () => {
     if (!currentWeekStart) return
 
     try {
-      setLoading(true)
-      setError(null)
-      
+      if (isMountedRef.current) {
+        setLoading(true)
+        setError(null)
+      }
+
       // Formater la date du lundi au format JJ/MM/AAAA
       const mondayFormatted = currentWeekStart.toLocaleDateString('en-US');
       // Vérifier si on est dans Electron
       if (window.electronAPI && window.electronAPI.getSchedule) {
         // Mode Electron - Utiliser l'IPC
-        const result = await window.electronAPI.getSchedule(mondayFormatted);
+        const result = (await window.electronAPI.getSchedule(mondayFormatted)) || {}
 
-        if (result.success) {
-          setScheduleData(result.data)
+        if (result?.success) {
+          if (isMountedRef.current) setScheduleData(result.data)
         } else {
-          setError(result.error || 'Erreur inconnue')
+          if (isMountedRef.current) setError(result?.error || 'Erreur inconnue')
         }
       } else {
         // Mode développement navigateur - Données mockées
         console.warn('⚠️ Mode développement : Electron API non disponible, utilisation de données mockées')
-        setError('Veuillez lancer l\'application avec Electron pour récupérer les vraies données (npm run dev)')
+        if (isMountedRef.current) setError('Veuillez lancer l\'application avec Electron pour récupérer les vraies données (npm run dev)')
       }
     } catch (err) {
       console.error('Erreur lors du chargement des données:', err)
-      setError(err.message)
+      if (isMountedRef.current) setError(err.message)
     } finally {
-      setLoading(false)
+      if (isMountedRef.current) setLoading(false)
     }
-  }
+  }, [currentWeekStart])
 
   useEffect(() => {
     loadSchedule()
-  }, [currentWeekStart])
+  }, [loadSchedule])
 
   // Fonction pour trouver le cours correspondant à un jour et une heure
   // Amélioration : affiche le cours sur toute la plage horaire (ex: 9h-11h sur 9h et 10h, mais pas 11h)

@@ -144,31 +144,50 @@ const ScheduleGrid = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-6 gap-2">
-        {/* En-tête vide pour la colonne des heures */}
-        <div className="p-3 bg-purple-100 rounded-lg font-semibold text-center text-purple-800">
-          Heures
+      <div className="relative grid grid-cols-6 gap-x-2">
+        {/* Lignes horizontales pour les heures */}
+        <div className="absolute w-full" style={{ zIndex: 0 }}>
+          {timeSlots.map((time, index) => (
+            <div
+              key={time}
+              className="border-t border-gray-200 relative"
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: `${(index + 1) * 60}px`, // +1 car on commence après les en-têtes
+                marginTop: '-1px', // Pour compenser la bordure
+              }}
+            >
+              <span className="absolute -top-4 left-3 text-xs text-gray-500">{time}</span>
+            </div>
+          ))}
         </div>
+
+        {/* Espace vide pour la colonne des heures */}
+        <div className="h-12 relative z-10" />
         
         {/* En-têtes des jours */}
         {daysOfWeek.map((day, index) => (
-          <div key={day} className="p-3 bg-purple-100 rounded-lg font-semibold text-center text-purple-800">
-            {day}
+          <div key={day} className="h-12 relative z-10">
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-purple-100 rounded-lg flex flex-col items-center justify-center p-2">
+              <div className="font-semibold text-purple-800">
+                {day}
+              </div>
               {scheduleData[index]?.date && (
-                <div className="text-xs font-normal text-purple-600 mt-1">
+                <div className="text-xs font-normal text-purple-600">
                   {scheduleData[index].date.replace(/^\S+\s*/, '')}
                 </div>
               )}
+            </div>
           </div>
         ))}
         
         {/* Grille de l'emploi du temps */}
         {timeSlots.map((time, timeIndex) => (
           <React.Fragment key={time}>
-            {/* Colonne des heures */}
-            <div className="p-3 bg-gray-50 rounded-lg font-medium text-center text-gray-600 border">
-              {time}
-            </div>
+            {/* Colonne des heures - maintenant vide car affichée en absolu */}
+            <div className="h-[60px]" />
             
             {/* Cellules pour chaque jour */}
             {daysOfWeek.map((day, dayIndex) => {
@@ -207,12 +226,15 @@ const ScheduleGrid = () => {
                 <div
                   key={`${day}-${time}`}
                   style={{
-                    gridRow: rowSpan > 1 ? `span ${rowSpan}` : undefined
+                    gridRow: rowSpan > 1 ? `span ${rowSpan}` : undefined,
+                    minHeight: course ? '59px' : '0px', // 60px - 1px pour l'alignement avec les lignes
+                    zIndex: 1,
+                    marginTop: '1px' // Pour aligner avec la ligne
                   }}
-                  className={`p-3 min-h-[60px] border-2 rounded-lg transition-colors duration-200 ${
+                  className={`relative p-3 mx-1 rounded-lg transition-colors duration-200 ${
                     course
-                      ? 'bg-purple-50 border-purple-300 hover:bg-purple-100'
-                      : 'border-dashed border-gray-200 hover:border-purple-300 hover:bg-purple-50'
+                      ? 'bg-purple-50 border border-purple-300 hover:bg-purple-100'
+                      : ''
                   }`}
                 >
                   {course ? (

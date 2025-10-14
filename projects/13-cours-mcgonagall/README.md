@@ -178,6 +178,34 @@ export default App;
 ```
 
 Le résultat : l'emploi du temps s'affiche automatiquement dans une interface claire et agréable, adaptée à tous les écrans.
+
+### Prompt du 14/10/2025
+> tout est parfait sauf que les cours du type "9h-11h" sont affichés sur les heures 9h et 11h, mais pas sur 10h, fixe ça
+
+**Réponse :**
+L'affichage des cours a été corrigé :
+- Les cours couvrant une plage horaire (ex : 9h-11h) apparaissent désormais sur toutes les heures intermédiaires (9h, 10h, 11h) dans la grille.
+- La fonction de rendu vérifie pour chaque créneau si l'heure est incluse dans la plage du cours, quel que soit le format (ex : "09:00-11:00", "9h-11h", "09h00-11h00").
+- Les créneaux sont bien remplis pour toute la durée du cours.
+
+Extrait de code :
+```js
+// src/components/ScheduleGrid.jsx
+const getCourseForSlot = (dayIndex, timeSlot) => {
+  // ...
+  return dayData.cours.find(c => {
+    if (!c.heure) return false
+    const match = c.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/)
+    if (match) {
+      let startHour = parseInt(match[1], 10)
+      let endHour = parseInt(match[3], 10)
+      let slotHour = parseInt(timeSlot.split(':')[0], 10)
+      return slotHour >= startHour && slotHour <= endHour
+    }
+    return c.heure.startsWith(timeSlot)
+  })
+}
+```
 ## Installation
 
 ```bash

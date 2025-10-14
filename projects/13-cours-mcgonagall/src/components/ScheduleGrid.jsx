@@ -62,16 +62,28 @@ const ScheduleGrid = () => {
   }, [currentWeekStart])
 
   // Fonction pour trouver le cours correspondant à un jour et une heure
+  // Amélioration : affiche le cours sur toute la plage horaire (ex: 9h-11h sur 9h, 10h, 11h)
   const getCourseForSlot = (dayIndex, timeSlot) => {
     if (!scheduleData || scheduleData.length === 0) return null
-    
-    // Trouver le jour correspondant
     const dayData = scheduleData[dayIndex]
     if (!dayData || !dayData.cours) return null
-    
-    // Chercher un cours qui commence à cette heure
-    const course = dayData.cours.find(c => c.heure.startsWith(timeSlot))
-    return course
+
+    // On cherche un cours dont la plage horaire inclut l'heure du créneau
+    // Format attendu : "09:00-11:00" ou "9h-11h" ou "09h00-11h00"
+    return dayData.cours.find(c => {
+      if (!c.heure) return false
+      // Extraction des heures de début et fin
+      const match = c.heure.match(/(\d{1,2})[h:]?(\d{0,2})\s*[-–]\s*(\d{1,2})[h:]?(\d{0,2})/)
+      if (match) {
+        let startHour = parseInt(match[1], 10)
+        let endHour = parseInt(match[3], 10)
+        // Si minutes présentes, on peut les utiliser mais ici on reste à l'heure pleine
+        let slotHour = parseInt(timeSlot.split(':')[0], 10)
+        return slotHour >= startHour && slotHour <= endHour
+      }
+      // Si le format est juste une heure, on compare directement
+      return c.heure.startsWith(timeSlot)
+    })
   }
 
   if (loading) {

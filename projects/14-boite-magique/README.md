@@ -270,3 +270,64 @@ Ce projet est développé dans le cadre du Workshop EPSI/WIS 2025.
 **Deadline:** 16/10/2025  
 **Story Points:** 8  
 **Copilots:** Frontend Copilot (lead), Documentation Copilot
+
+
+
+---
+
+## 🗒️ Historique des prompts utilisateur
+
+Voici tous les prompts envoyés à GitHub Copilot durant le développement :
+
+quand j'archive, c'est envoyé où ?
+Okay alors maintenant on va push l'archive sur github
+nan mais de manière automatique, tu vas ajouter une option à la CLI avec un lien github et tu prends mes credentials de git config
+J'aimerais pouvoir l'envoyer dans un dossier spécifique sur mon repo github
+si le dossier existe pas il va être créé ?
+❌ Error: Failed to push to GitHub: filesystem error: in rename: Invalid argument ["./archive-magique/archives"] ["./archive-magique/archives/2025-10-14/archives"]
+Ajoute une option pour push sur une branche choisie qui existe ou pas
+/Users/tweenty/Desktop/workshop-poudlard-epsi/projects/14-boite-magique/src/MagicBox.cpp:145:16: error: out-of-line definition of 'pushToGitHub' does not match any declaration in 'MagicBox'
+🚀 Pushing to GitHub...
+⚠️  Push output: error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/juju149/workshop-poudlard-epsi.git'
+error: src refspec master does not match any
+error: failed to push some refs to 'https://github.com/juju149/workshop-poudlard-epsi.git'
+✅ Successfully pushed to GitHub!
+🌐 View your archive at: https://github.com/juju149/workshop-poudlard-epsi.git
+ajoute tous les prompts que je t'ai fait à la fin du readme
+⚠️  Push output: error: src refspec ma-branche-speciale does not match any
+error: failed to push some refs to 'https://github.com/juju149/workshop-poudlard-epsi.git'
+Tu m'ajoutes l'historique des prompts au readme avec la solution
+
+---
+
+## 🏆 Solution CLI finale
+
+La Boite Magique supporte désormais l’archivage, le push GitHub dans un dossier et sur une branche personnalisée :
+
+```bash
+./bin/magic-box -r <chemin_source> -o <chemin_archive> -e <extensions> \
+  --github <url_repo> --github-folder <dossier_cible> --github-branch <nom_branche>
+```
+
+**Exemple complet** :
+
+```bash
+./bin/magic-box -r .. -o ./archive-magique -e .cpp,.h,.md \
+  --github https://github.com/juju149/workshop-poudlard-epsi.git \
+  --github-folder archives/2025-10-14 \
+  --github-branch ma-branche-speciale
+```
+
+**Explications** :
+- `--github` : URL du repo GitHub (ex : https://github.com/juju149/workshop-poudlard-epsi.git)
+- `--github-folder` : dossier cible dans le repo (ex : archives/2025-10-14)
+- `--github-branch` : branche cible (créée si elle n’existe pas)
+
+Le programme :
+1. Archive les fichiers dans le dossier local choisi
+2. Place l’archive dans le dossier cible du repo
+3. Crée/switch la branche demandée
+4. Commit et push sur la branche et le dossier voulus
+
+**Remarque** : Si le dossier ou la branche n’existent pas, ils sont créés automatiquement.

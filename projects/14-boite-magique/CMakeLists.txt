@@ -53,9 +53,12 @@ add_executable(magic-box ${SOURCES} ${HEADERS})
 if(WIN32)
     # Windows may need additional libraries
     target_link_libraries(magic-box)
-else()
-    # Unix-like systems need stdc++fs for some older compilers
+elseif(UNIX AND NOT APPLE)
+    # Linux systems may need stdc++fs for some older compilers
     target_link_libraries(magic-box stdc++fs)
+else()
+    # macOS doesn't need stdc++fs
+    target_link_libraries(magic-box)
 endif()
 
 # Installation rules

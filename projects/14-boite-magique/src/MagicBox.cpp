@@ -120,3 +120,158 @@ void MagicBox::displayStatistics() const {
 const std::vector<fs::path>& MagicBox::getCollectedFiles() const {
     return collectedFiles_;
 }
+
+std::string MagicBox::executeCommand(const std::string& command) {
+    std::string result;
+    FILE* pipe = popen(command.c_str(), "r");
+    if (pipe) {
+        char buffer[128];
+        while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+            result += buffer;
+        }
+        pclose(pipe);
+    }
+    // Remove trailing newline
+    if (!result.empty() && result.back() == '\n') {
+        result.pop_back();
+    }
+    return result;
+}
+
+std::string MagicBox::getGitConfig(const std::string& key) {
+    return executeCommand("git config --global " + key + " 2>/dev/null");
+}
+
+void MagicBox::pushToGitHub(const std::string& archivePath, const std::string& githubUrl, const std::string& githubFolder, const std::string& githubBranch) {
+    fs::path archiveDir(archivePath);
+    std::cout << "\n🚀 Pushing to GitHub..." << std::endl;
+    std::cout << "📂 Archive: " << fs::absolute(archiveDir) << std::endl;
+    std::cout << "🔗 Repository: " << githubUrl << std::endl;
+    if (!githubFolder.empty()) {
+        std::cout << "📁 Target folder in repo: " << githubFolder << std::endl;
+    }
+
+    // Get git credentials
+    std::string gitName = getGitConfig("user.name");
+    std::string gitEmail = getGitConfig("user.email");
+
+    if (gitName.empty() || gitEmail.empty()) {
+        throw std::runtime_error("Git credentials not found. Please configure:\n"
+                               "  git config --global user.name \"Your Name\"\n"
+                               "  git config --global user.email \"your.email@example.com\"");
+    }
+
+    std::cout << "👤 Using Git credentials: " << gitName << " <" << gitEmail << ">" << std::endl;
+
+    try {
+        // Change to archive directory
+        std::string originalPath = fs::current_path();
+        fs::current_path(archiveDir);
+
+        std::cout << "📝 Initializing git repository..." << std::endl;
+
+        // Initialize git repo
+        if (executeCommand("git init 2>&1").find("Initialized") == std::string::npos &&
+            executeCommand("git status 2>&1").find("fatal") != std::string::npos) {
+            executeCommand("git init");
+        }
+
+        // Configure git for this repo
+        executeCommand("git config user.name \"" + gitName + "\"");
+        executeCommand("git config user.email \"" + gitEmail + "\"");
+
+        // Si dossier cible, déplacer le contenu dans ce dossier
+        if (!githubFolder.empty()) {
+            fs::path targetDir = archiveDir / githubFolder;
+            fs::create_directories(targetDir);
+            std::string rootSegment = fs::path(githubFolder).begin()->string();
+            for (const auto& entry : fs::directory_iterator(archiveDir)) {
+                // Ignore the target folder and any folder/file whose name matches the root segment
+                if (entry.path() == targetDir || entry.path().filename() == rootSegment) continue;
+                fs::path dest = targetDir / entry.path().filename();
+                if (fs::is_directory(entry.path())) {
+                    // Copie récursive du dossier
+                    std::error_code ec;
+                    fs::copy(entry.path(), dest, fs::copy_options::recursive | fs::copy_options::overwrite_existing, ec);
+                    if (ec) std::cerr << "⚠️  Could not copy directory " << entry.path() << ": " << ec.message() << std::endl;
+                } else {
+                    // Déplacement du fichier
+                    std::error_code ec;
+                    fs::rename(entry.path(), dest, ec);
+                    if (ec) std::cerr << "⚠️  Could not move file " << entry.path() << ": " << ec.message() << std::endl;
+                }
+            }
+        }
+
+        // Add all files
+        std::cout << "📦 Adding files to git..." << std::endl;
+        executeCommand("git add .");
+
+        // Gestion de la branche cible (APRÈS avoir ajouté les fichiers)
+        if (!githubBranch.empty()) {
+            std::cout << "🌿 Target branch: " << githubBranch << std::endl;
+            // Crée et switch sur la branche (si elle n'existe pas)
+            std::string branchCheck = executeCommand("git branch --list " + githubBranch);
+            if (branchCheck.empty()) {
+                executeCommand("git checkout -b " + githubBranch);
+            } else {
+                executeCommand("git checkout " + githubBranch);
+            }
+        }
+
+        // Create commit
+        std::cout << "💾 Creating commit..." << std::endl;
+        std::string commitMsg = "✨ Magic Box Archive - " + executeCommand("date '+%Y-%m-%d %H:%M:%S'");
+        
+        // Debug: vérifier l'état avant commit
+        std::string statusCheck = executeCommand("git status --porcelain 2>&1");
+        std::cout << "🔍 Debug - Git status: " << (statusCheck.empty() ? "no changes" : statusCheck) << std::endl;
+        
+        std::string commitResult = executeCommand("git commit -m \"" + commitMsg + "\" 2>&1");
+        std::cout << "🔍 Debug - Commit result: " << commitResult << std::endl;
+        
+        // Si aucun changement à commiter, forcer un commit vide pour que la branche existe
+        if (commitResult.find("nothing to commit") != std::string::npos || 
+            commitResult.find("no changes added") != std::string::npos) {
+            std::cout << "🔍 Debug - Forcing empty commit..." << std::endl;
+            std::string emptyCommitResult = executeCommand("git commit --allow-empty -m \"" + commitMsg + " (empty)\" 2>&1");
+            std::cout << "🔍 Debug - Empty commit result: " << emptyCommitResult << std::endl;
+        }
+        
+        // Debug: vérifier qu'on a bien un commit
+        std::string logCheck = executeCommand("git log --oneline -1 2>&1");
+        std::cout << "🔍 Debug - Last commit: " << logCheck << std::endl;
+
+        // Add remote if not exists
+        std::string remoteCheck = executeCommand("git remote -v 2>/dev/null");
+        if (remoteCheck.find("origin") == std::string::npos) {
+            std::cout << "🔗 Adding GitHub remote..." << std::endl;
+            executeCommand("git remote add origin " + githubUrl);
+        }
+
+        // Push to GitHub
+        std::cout << "🚀 Pushing to GitHub..." << std::endl;
+        std::string pushCmd;
+        if (!githubBranch.empty()) {
+            pushCmd = "git push -u origin " + githubBranch + " 2>&1";
+        } else {
+            pushCmd = "git push -u origin main 2>&1 || git push -u origin master 2>&1";
+        }
+        std::string pushResult = executeCommand(pushCmd);
+        if (pushResult.find("error") != std::string::npos || 
+            pushResult.find("fatal") != std::string::npos) {
+            std::cerr << "⚠️  Push output: " << pushResult << std::endl;
+        }
+
+        // Restore original path
+        fs::current_path(originalPath);
+
+        std::cout << "✅ Successfully pushed to GitHub!" << std::endl;
+        std::cout << "🌐 View your archive at: " << githubUrl << std::endl;
+
+    } catch (const std::exception& e) {
+        // Restore original path in case of error
+        try { fs::current_path(fs::current_path().parent_path()); } catch (...) {}
+        throw std::runtime_error("Failed to push to GitHub: " + std::string(e.what()));
+    }
+}

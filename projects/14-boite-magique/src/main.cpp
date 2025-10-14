@@ -24,10 +24,14 @@ void printUsage(const char* programName) {
     std::cout << "  -o, --output <path>     Output archive directory (default: ./workshop-archive)" << std::endl;
     std::cout << "  -e, --ext <extensions>  File extensions to include (comma-separated, e.g., .cpp,.h,.md)" << std::endl;
     std::cout << "  -s, --stats             Display statistics only (no archive creation)" << std::endl;
+    std::cout << "  -g, --github <url>      Push archive to GitHub repository (requires git credentials)" << std::endl;
+    std::cout << "      --github-folder <folder>  Specify target folder in the GitHub repo (default: root)" << std::endl;
+    std::cout << "      --github-branch <branch>  Specify target branch for push (default: main or master)" << std::endl;
     std::cout << "\nExamples:" << std::endl;
     std::cout << "  " << programName << " -r . -o ./archive" << std::endl;
     std::cout << "  " << programName << " -r ~/workshop -e .cpp,.h,.md,.py" << std::endl;
     std::cout << "  " << programName << " -s -e .cpp,.h" << std::endl;
+    std::cout << "  " << programName << " -r . -g https://github.com/user/repo.git" << std::endl;
 }
 
 std::vector<std::string> parseExtensions(const std::string& extString) {
@@ -59,6 +63,9 @@ int main(int argc, char* argv[]) {
     std::string outputPath = "./workshop-archive";
     std::vector<std::string> extensions;
     bool statsOnly = false;
+    std::string githubUrl;
+    std::string githubFolder;
+    std::string githubBranch;
     
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
@@ -90,6 +97,27 @@ int main(int argc, char* argv[]) {
             }
         } else if (arg == "-s" || arg == "--stats") {
             statsOnly = true;
+        } else if (arg == "-g" || arg == "--github") {
+            if (i + 1 < argc) {
+                githubUrl = argv[++i];
+            } else {
+                std::cerr << "Error: --github requires a repository URL" << std::endl;
+                return 1;
+            }
+        } else if (arg == "--github-folder") {
+            if (i + 1 < argc) {
+                githubFolder = argv[++i];
+            } else {
+                std::cerr << "Error: --github-folder requires a folder name" << std::endl;
+                return 1;
+            }
+        } else if (arg == "--github-branch") {
+            if (i + 1 < argc) {
+                githubBranch = argv[++i];
+            } else {
+                std::cerr << "Error: --github-branch requires a branch name" << std::endl;
+                return 1;
+            }
         } else {
             std::cerr << "Unknown option: " << arg << std::endl;
             printUsage(argv[0]);
@@ -125,6 +153,13 @@ int main(int argc, char* argv[]) {
         if (!statsOnly) {
             std::cout << std::endl;
             magicBox.createArchive(outputPath);
+            
+            // Push to GitHub if URL provided
+            if (!githubUrl.empty()) {
+                magicBox.pushToGitHub(outputPath, githubUrl, githubFolder, githubBranch);
+            }
+        } else if (!githubUrl.empty()) {
+            std::cerr << "⚠️  Cannot push to GitHub in stats-only mode" << std::endl;
         }
         
         std::cout << "\n✨ Magic complete! ✨" << std::endl;

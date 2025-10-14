@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <cstdlib>
 
 namespace fs = std::filesystem;
 
@@ -33,6 +34,14 @@ public:
     void displayStatistics() const;
     
     /**
+     * @brief Push archive to GitHub repository
+     * @param archivePath Path to the archive directory
+     * @param githubUrl GitHub repository URL
+     * @param githubFolder Target folder in the GitHub repository
+     */
+    void pushToGitHub(const std::string& archivePath, const std::string& githubUrl, const std::string& githubFolder = "", const std::string& githubBranch = "");
+    
+    /**
      * @brief Get list of collected files
      */
     const std::vector<fs::path>& getCollectedFiles() const;
@@ -43,6 +52,8 @@ private:
     
     bool isValidExtension(const fs::path& file, const std::vector<std::string>& extensions) const;
     void copyToArchive(const fs::path& source, const fs::path& destination);
+    std::string executeCommand(const std::string& command);
+    std::string getGitConfig(const std::string& key);
 };
 
 #endif // MAGIC_BOX_H

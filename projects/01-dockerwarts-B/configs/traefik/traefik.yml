@@ -1,0 +1,16 @@
+# Exemple de configuration Traefik
+api:
+  dashboard: true
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@example.com
+      storage: acme.json
+      httpChallenge:
+        entryPoint: web
+

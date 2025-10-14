@@ -1,0 +1,4 @@
+# Exemple de configuration ElasticSearch
+cluster.name: es-cluster
+node.name: es-node1
+

@@ -1,0 +1,185 @@
+# Réseau dédié pour l'infrastructure Big Data
+networks:
+  bigdata_net:
+    driver: bridge
+
+# Volumes persistants pour chaque service
+volumes:
+  glpi_data:
+  elasticsearch_data1:
+  elasticsearch_data2:
+  grafana_data:
+  cassandra_data:
+
+services:
+  # 1. GLPI - Outil de ticketing (compatible ARM/M1)
+  glpi:
+    image: glpi/glpi:latest # Compatible multi-arch
+    platform: linux/arm64 # Pour Mac M1/M2
+    container_name: glpi
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    volumes:
+      - glpi_data:/var/www/html
+    ports:
+      - "${GLPI_PORT}:80"
+    environment:
+      GLPI_DB_HOST: glpi-db
+      GLPI_DB_USER: ${GLPI_DB_USER}
+      GLPI_DB_PASSWORD: ${GLPI_DB_PASSWORD}
+      GLPI_DB_NAME: ${GLPI_DB_NAME}
+    depends_on:
+      - glpi-db
+    configs:
+      - source: glpi_config
+        target: /etc/glpi
+
+  glpi-db:
+    image: mariadb:10.5 # Compatible ARM/M1
+    container_name: glpi-db
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    volumes:
+      - glpi_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${GLPI_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${GLPI_DB_NAME}
+      MYSQL_USER: ${GLPI_DB_USER}
+      MYSQL_PASSWORD: ${GLPI_DB_PASSWORD}
+
+  # 2. ElasticSearch - Historisation de données (Cluster 2 nœuds, ARM/M1)
+  elasticsearch1:
+    image: elasticsearch:8.12.0 # Docker Hub officiel, multi-arch
+    platform: linux/arm64 # Pour Mac M1/M2
+    container_name: elasticsearch1
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    volumes:
+      - elasticsearch_data1:/usr/share/elasticsearch/data
+    environment:
+      - node.name=es-node1
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=elasticsearch2
+      - cluster.initial_master_nodes=es-node1,es-node2
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "${ELASTICSEARCH_PORT1}:9200"
+    configs:
+      - source: elasticsearch_config
+        target: /usr/share/elasticsearch/config
+
+  elasticsearch2:
+    image: elasticsearch:8.12.0 # Docker Hub officiel, multi-arch
+    platform: linux/arm64 # Pour Mac M1/M2
+    container_name: elasticsearch2
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    volumes:
+      - elasticsearch_data2:/usr/share/elasticsearch/data
+    environment:
+      - node.name=es-node2
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=elasticsearch1
+      - cluster.initial_master_nodes=es-node1,es-node2
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "${ELASTICSEARCH_PORT2}:9200"
+    configs:
+      - source: elasticsearch_config
+        target: /usr/share/elasticsearch/config
+
+  # 3. Grafana - Monitoring centralisé (compatible ARM/M1)
+  grafana:
+    image: grafana/grafana:10.2.2 # Compatible ARM/M1
+    container_name: grafana
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+    configs:
+      - source: grafana_config
+        target: /etc/grafana
+
+  # 4. Cassandra - Datalake avec réplication simple (compatible ARM/M1)
+  cassandra:
+    image: bitnami/cassandra:latest # Compatible multi-arch
+    container_name: cassandra
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    ports:
+      - "${CASSANDRA_PORT}:9042"
+    environment:
+      CASSANDRA_CLUSTER_NAME: BigDataCluster
+      CASSANDRA_NUM_TOKENS: 16
+      CASSANDRA_REPLICATION_FACTOR: 1
+      CASSANDRA_PASSWORD: ${CASSANDRA_PASSWORD}
+    configs:
+      - source: cassandra_config
+        target: /etc/cassandra
+
+  # 5. Traefik - Pare-feu / proxy applicatif avec HTTPS Let's Encrypt
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - bigdata_net
+    ports:
+      - "${TRAEFIK_HTTP_PORT}:80"
+      - "${TRAEFIK_HTTPS_PORT}:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./configs/traefik/traefik.yml:/traefik.yml:ro
+      - ./configs/traefik/acme.json:/acme.json
+    environment:
+      TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL: ${LETSENCRYPT_EMAIL}
+      TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_STORAGE: /acme.json
+      TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_HTTPCHALLENGE_ENTRYPOINT: web
+    configs:
+      - source: traefik_config
+        target: /etc/traefik
+
+# Définition des configs pour chaque service
+configs:
+  glpi_config:
+    file: ./configs/glpi/config.ini
+  elasticsearch_config:
+    file: ./configs/elasticsearch/elasticsearch.yml
+  grafana_config:
+    file: ./configs/grafana/grafana.ini
+  cassandra_config:
+    file: ./configs/cassandra/cassandra.yaml
+  traefik_config:
+    file: ./configs/traefik/traefik.yml
+

@@ -225,36 +225,17 @@ Le scraping est bien déclenché à chaque changement de semaine grâce au hook 
 ---
 
 ### Prompt du 14/10/2025
-> Ajoute tout ça au readme
+> Passe la date du scraping en en-US au lieu de fr-FR
 
 **Réponse :**
-Toutes les modifications et prompts sont ajoutés ici pour la traçabilité. Les fonctionnalités de navigation, scraping dynamique, affichage des cours, gestion des erreurs et formatage sont documentées.
+La date du lundi utilisée pour le scraping est maintenant formatée en "en-US" au lieu de "fr-FR" dans le composant ScheduleGrid.
 
 ---
 
-## Installation
+### Prompt du 14/10/2025
+> Passe le mode headless à true dans Puppeteer
 
-```bash
-npm install
-```
+**Réponse :**
+L'option headless est maintenant passée à true pour Puppeteer dans le fichier `scraper.js`. Le navigateur ne s'affichera plus lors du scraping.
 
-## Lancement
-
-```bash
-npm start
-```
-
-## Scraping
-
-Pour lancer le scraping :
-```bash
-node scraper.js
-```
-
-## Configuration
-
-Créer un fichier `.env` à la racine avec :
-```
-USERNAME=VotreIdentifiant
-PASSWORD=VotreMotDePasse
-```
+---

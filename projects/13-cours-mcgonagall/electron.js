@@ -37,7 +37,6 @@ function createWindow() {
   // En production, charge les fichiers buildés
   if (isDev) {
     win.loadURL('http://localhost:3002');
-    win.webContents.openDevTools();
   } else {
     win.loadFile(join(__dirname, 'dist/index.html'));
   }

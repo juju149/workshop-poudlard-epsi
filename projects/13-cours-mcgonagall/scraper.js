@@ -4,7 +4,7 @@ import puppeteer from 'puppeteer';
 config();
 
 async function scrapeSchedule(date = null) {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   // Format de la date : JJ/MM/AAAA (fr-FR)
   const targetDate = date || new Date().toLocaleDateString('fr-FR');
@@ -85,7 +85,6 @@ async function scrapeSchedule(date = null) {
   });
 
   await browser.close();
-  console.log(result);
   
   return result;
 }

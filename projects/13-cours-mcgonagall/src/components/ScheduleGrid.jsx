@@ -116,7 +116,13 @@ const ScheduleGrid = () => {
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-2xl font-bold text-purple-800">
-          Semaine du {currentWeekStart?.toLocaleDateString('fr-FR')}
+          {(() => {
+            if (!currentWeekStart) return '';
+            const lundi = currentWeekStart;
+            const vendredi = new Date(lundi);
+            vendredi.setDate(lundi.getDate() + 4);
+            return `Semaine du ${lundi.toLocaleDateString('fr-FR')} au ${vendredi.toLocaleDateString('fr-FR')}`;
+          })()}
         </h2>
         <button 
           onClick={loadSchedule}

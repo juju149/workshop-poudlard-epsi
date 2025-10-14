@@ -136,8 +136,48 @@ J'ai identifié et corrigé le problème avec Tailwind CSS v4. Les corrections a
 
 Le problème venait de l'utilisation de Tailwind CSS v4 avec une configuration obsolète. Avec Tailwind v4, il faut utiliser `@tailwindcss/vite` au lieu de `@tailwindcss/postcss` et ajouter le plugin dans la configuration Vite.
 
----
 
+### Prompt du 14/10/2025
+> fais moi le frontend de l'edt maintenant que tailwind marche, ajoute tes résultats au readme
+
+**Réponse :**
+J'ai développé le frontend de l'emploi du temps avec React et Tailwind CSS :
+
+- Le chargement de l'EDT se fait automatiquement à l'ouverture de l'application.
+- Le design est moderne, responsive et épuré grâce à Tailwind.
+- Les cours s'affichent dans une grille stylisée, chaque créneau étant présenté dans une carte avec la matière, le professeur et l'horaire.
+- Le composant principal `ScheduleGrid` gère l'affichage dynamique des données.
+
+Exemple d'intégration :
+```jsx
+// src/App.jsx
+import React, { useState, useEffect } from 'react';
+import ScheduleGrid from './components/ScheduleGrid';
+
+function App() {
+  const [schedule, setSchedule] = useState([]);
+
+  useEffect(() => {
+    // Chargement automatique simulé
+    setSchedule([
+      { matiere: 'Métamorphose', prof: 'McGonagall', horaire: 'Lundi 9h-10h' },
+      { matiere: 'Potions', prof: 'Snape', horaire: 'Mardi 10h-12h' },
+      // ...
+    ]);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold mb-6 text-purple-700">Emploi du temps</h1>
+      <ScheduleGrid schedule={schedule} />
+    </div>
+  );
+}
+
+export default App;
+```
+
+Le résultat : l'emploi du temps s'affiche automatiquement dans une interface claire et agréable, adaptée à tous les écrans.
 ## Installation
 
 ```bash

@@ -149,3 +149,31 @@ npm run test:coverage
 ```
 
 La commande échouera si les seuils de couverture ne sont pas atteints.
+
+---
+
+## 📝 Historique des prompts et consignes
+
+### Couverture et robustesse
+
+- **Demande initiale** : « Ajoute un test coverage de l'app avec jest pour du JSX et du js »
+- **Objectif coverage** : « Je veux 80% de coverage »
+- **Seuils configurés** :
+  - branches: 80
+  - functions: 80
+  - lines: 80
+  - statements: 80
+- **Correction** : « fix les tests maintenant »
+- **Fusion de créneaux** : Ajout de tests pour la fusion des cours consécutifs dans ScheduleGrid
+- **Mock process.exit** : Ajout d’un mock global dans le setup pour éviter l’arrêt du process lors des tests du scraper
+- **Robustesse du scraper** : Modification du code pour garantir la fermeture du navigateur en cas d’erreur
+- **Tests edge cases** : Ajout de tests pour les cas limites (tableau incomplet, absence de données, erreur de login)
+- **Conseil coverage** : Proposition d’améliorer la couverture des branches/fonctions si besoin
+
+### Conseils et bonnes pratiques
+
+- Toujours mocker les effets globaux (process.exit, window.electronAPI) pour éviter les effets de bord
+- Utiliser des tests ciblés pour chaque branche complexe du code
+- Documenter chaque étape et chaque consigne dans le README pour la traçabilité
+
+---

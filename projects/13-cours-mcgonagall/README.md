@@ -331,3 +331,25 @@ Masquage du texte "Libre" pour le créneau de 18h :
 - Plus logique visuellement puisque les cours se terminent à 18h maximum
 
 ---
+
+### Prompts utilisateur
+
+- « Ajoute un test coverage de l'app avec jest pour du JSX et du js »
+- « Je veux 80% de coverage »
+- « global: { branches: 63, functions: 76, lines: 78, statements: 76, } Faut pas le modifier ça ? »
+- « fix les tests maintenant »
+- « ajoute tous les prompts nouveaux au readme »
+- « oui dans le readme principal les prompts que je t'ai fait et les solutions »
+
+### Solutions apportées
+
+- Mise en place de Jest avec configuration pour JSX et JS
+- Ajout de la couverture de test automatique (collectCoverage, coverageThreshold)
+- Modification des seuils de couverture à 80% pour branches, fonctions, lignes et statements
+- Création et correction de tests unitaires pour les composants React et le scraper
+- Ajout de tests pour les cas limites et la fusion de créneaux dans ScheduleGrid
+- Mock global de process.exit pour éviter l’arrêt du process lors des tests
+- Modification du scraper pour garantir la fermeture du navigateur en cas d’erreur
+- Documentation complète des étapes et consignes dans TESTS.md et README.md
+
+---

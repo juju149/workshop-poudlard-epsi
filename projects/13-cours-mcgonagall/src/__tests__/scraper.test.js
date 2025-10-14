@@ -220,4 +220,67 @@ describe('Scraper Functions', () => {
       expect(Array.isArray(result)).toBe(true);
     });
   });
+
+  describe('scrapeSchedule extraction edge cases', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('ignore les cases sans table TCase', async () => {
+      mockPage.$.mockResolvedValue(null);
+      mockPage.evaluate.mockResolvedValue([
+        {
+          date: 'Lundi',
+          cours: [null]
+        }
+      ]);
+      const result = await scrapeSchedule();
+      expect(result[0].cours).toEqual([null]);
+    });
+
+    test('ignore les cases avec moins de 3 lignes', async () => {
+      mockPage.$.mockResolvedValue(null);
+      mockPage.evaluate.mockResolvedValue([
+        {
+          date: 'Lundi',
+          cours: [
+            { matiere: 'Potions', prof: 'Rogue', heure: '', salle: '' }
+          ]
+        }
+      ]);
+      const result = await scrapeSchedule();
+      expect(result[0].cours[0].heure).toBe('');
+    });
+
+    test('gère l’absence de matière, prof, heure ou salle', async () => {
+      mockPage.$.mockResolvedValue(null);
+      mockPage.evaluate.mockResolvedValue([
+        {
+          date: 'Lundi',
+          cours: [
+            { matiere: '', prof: '', heure: '', salle: '' }
+          ]
+        }
+      ]);
+      const result = await scrapeSchedule();
+      expect(result[0].cours[0]).toEqual({ matiere: '', prof: '', heure: '', salle: '' });
+    });
+
+    test('ferme le navigateur et quitte en cas d’erreur de login', async () => {
+      mockPage.$.mockResolvedValue({ selector: '#fm1' });
+      mockPage.waitForSelector.mockResolvedValue(true);
+      mockPage.type.mockResolvedValue();
+      mockPage.click.mockResolvedValue();
+      mockPage.evaluate.mockImplementation(() => { throw new Error('Erreur de login'); });
+      const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+      try {
+        await scrapeSchedule();
+      } catch (e) {
+        expect(e.message).toBe('Erreur de login');
+      }
+      expect(mockBrowser.close).toHaveBeenCalled();
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      exitSpy.mockRestore();
+    });
+  });
 });

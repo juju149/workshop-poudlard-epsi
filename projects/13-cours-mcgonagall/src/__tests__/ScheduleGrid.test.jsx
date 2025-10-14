@@ -242,4 +242,80 @@ describe('ScheduleGrid Component', () => {
       expect(screen.getByText(/Semaine du/i)).toBeInTheDocument();
     });
   });
+
+  test('fusionne les cours consécutifs sur plusieurs créneaux', async () => {
+    window.electronAPI.getSchedule = jest.fn().mockResolvedValue({
+      success: true,
+      data: [
+        {
+          date: 'Lundi 14/10/2025',
+          cours: [
+            { matiere: 'Potions', prof: 'Severus Rogue', salle: 'Cachots', heure: '08:00-10:00' },
+            { matiere: 'Potions', prof: 'Severus Rogue', salle: 'Cachots', heure: '10:00-12:00' }
+          ]
+        },
+        { date: 'Mardi 15/10/2025', cours: [] },
+        { date: 'Mercredi 16/10/2025', cours: [] },
+        { date: 'Jeudi 17/10/2025', cours: [] },
+        { date: 'Vendredi 18/10/2025', cours: [] }
+      ]
+    });
+    render(<ScheduleGrid />);
+    await waitFor(() => {
+      // Le cours doit être fusionné sur 4h (08:00 à 12:00)
+      expect(screen.getByText('Potions')).toBeInTheDocument();
+      expect(screen.getByText(/Severus Rogue/)).toBeInTheDocument();
+      expect(screen.getByText('Cachots')).toBeInTheDocument();
+    });
+    // Vérifie qu'il n'y a qu'une seule cellule "Potions" affichée
+    expect(screen.getAllByText('Potions').length).toBe(1);
+  });
+
+  test('affiche une cellule cachée pour les créneaux déjà occupés', async () => {
+    window.electronAPI.getSchedule = jest.fn().mockResolvedValue({
+      success: true,
+      data: [
+        {
+          date: 'Lundi 14/10/2025',
+          cours: [
+            { matiere: 'Sortilèges', prof: 'Filius Flitwick', salle: 'Salle 2E', heure: '09:00-11:00' }
+          ]
+        },
+        { date: 'Mardi 15/10/2025', cours: [] },
+        { date: 'Mercredi 16/10/2025', cours: [] },
+        { date: 'Jeudi 17/10/2025', cours: [] },
+        { date: 'Vendredi 18/10/2025', cours: [] }
+      ]
+    });
+    render(<ScheduleGrid />);
+    await waitFor(() => {
+      // La cellule "hidden" pour 10:00 doit exister
+      const hiddenCells = document.querySelectorAll('.hidden');
+      expect(hiddenCells.length).toBeGreaterThan(0);
+    });
+  });
+
+  test('ne fusionne pas les cours si trou entre deux créneaux', async () => {
+    window.electronAPI.getSchedule = jest.fn().mockResolvedValue({
+      success: true,
+      data: [
+        {
+          date: 'Lundi 14/10/2025',
+          cours: [
+            { matiere: 'Potions', prof: 'Severus Rogue', salle: 'Cachots', heure: '08:00-09:00' },
+            { matiere: 'Potions', prof: 'Severus Rogue', salle: 'Cachots', heure: '10:00-12:00' }
+          ]
+        },
+        { date: 'Mardi 15/10/2025', cours: [] },
+        { date: 'Mercredi 16/10/2025', cours: [] },
+        { date: 'Jeudi 17/10/2025', cours: [] },
+        { date: 'Vendredi 18/10/2025', cours: [] }
+      ]
+    });
+    render(<ScheduleGrid />);
+    await waitFor(() => {
+      // Les deux cours doivent être affichés séparément
+      expect(screen.getAllByText('Potions').length).toBe(2);
+    });
+  });
 });

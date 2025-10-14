@@ -4,8 +4,27 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { readFileSync, existsSync } from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Compute __filename and __dirname in a way that won't break in Jest (no static
+// reference to `import.meta` which causes a parse error in CommonJS transforms).
+let __filename;
+let __dirname;
+try {
+  // If running under an environment where import.meta is available (ESM), use it.
+  // Use eval to avoid leaving the token `import.meta` in the static AST which
+  // can cause Jest/Babel parsing errors when running tests.
+  const importMetaUrl = eval('typeof import.meta !== "undefined" ? import.meta.url : undefined');
+  if (importMetaUrl) {
+    __filename = fileURLToPath(importMetaUrl);
+    __dirname = dirname(__filename);
+  } else {
+    // Fallback for test environments (Jest) or CommonJS: use current working dir
+    __filename = process.cwd();
+    __dirname = process.cwd();
+  }
+} catch (e) {
+  __filename = process.cwd();
+  __dirname = process.cwd();
+}
 
 // Charger .env si ce n'est pas déjà fait (pour compatibilité avec asar)
 const envPath = join(__dirname, '.env');
@@ -47,7 +66,7 @@ function findChrome() {
 async function scrapeSchedule(date = null) {
   const chromePath = findChrome();
   const launchOptions = { 
-    headless: false,
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   };
   

@@ -136,11 +136,11 @@ const ScheduleGrid = () => {
         {daysOfWeek.map((day, index) => (
           <div key={day} className="p-3 bg-purple-100 rounded-lg font-semibold text-center text-purple-800">
             {day}
-            {scheduleData[index]?.date && (
-              <div className="text-xs font-normal text-purple-600 mt-1">
-                {scheduleData[index].date}
-              </div>
-            )}
+              {scheduleData[index]?.date && (
+                <div className="text-xs font-normal text-purple-600 mt-1">
+                  {scheduleData[index].date.replace(/^\S+\s*/, '')}
+                </div>
+              )}
           </div>
         ))}
         
@@ -168,7 +168,12 @@ const ScheduleGrid = () => {
                   {course ? (
                     <div className="text-sm">
                       <div className="font-bold text-purple-900">{course.matiere}</div>
-                      <div className="text-purple-700 text-xs mt-1">{course.prof}</div>
+                      <div className="text-purple-700 text-xs mt-1">{
+                        course.prof
+                          .split(' ')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' ')
+                      }</div>
                       <div className="text-purple-600 text-xs">{course.salle}</div>
                       <div className="text-gray-500 text-xs mt-1">{course.heure}</div>
                     </div>

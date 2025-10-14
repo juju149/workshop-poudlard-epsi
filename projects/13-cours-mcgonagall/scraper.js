@@ -61,7 +61,12 @@ async function scrapeSchedule(date = null) {
         
         // Prof et informations (deuxième ligne)
         const profInfo = rows[1]?.querySelector('.TCProf');
-        const prof = profInfo ? profInfo.textContent?.replace(/\s+/g, ' ').trim() : '';
+        let prof = '';
+        if (profInfo) {
+          const html = profInfo.innerHTML || '';
+          // Prendre le texte avant le premier <br>
+          prof = html.split('<br>')[0].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        }
         
         // Heure et salle (troisième ligne)
         const heure = rows[2]?.querySelector('.TChdeb')?.textContent?.trim() || '';

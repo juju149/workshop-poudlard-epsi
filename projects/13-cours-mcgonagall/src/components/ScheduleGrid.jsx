@@ -163,7 +163,7 @@ const ScheduleGrid = () => {
         ))}
         
         {/* Grille de l'emploi du temps */}
-        {timeSlots.map((time) => (
+        {timeSlots.map((time, timeIndex) => (
           <React.Fragment key={time}>
             {/* Colonne des heures */}
             <div className="p-3 bg-gray-50 rounded-lg font-medium text-center text-gray-600 border">
@@ -172,14 +172,46 @@ const ScheduleGrid = () => {
             
             {/* Cellules pour chaque jour */}
             {daysOfWeek.map((day, dayIndex) => {
-              const course = getCourseForSlot(dayIndex, time)
+              // Ne pas afficher si cette cellule fait partie d'un cours fusionné précédent
+              if (timeIndex > 0) {
+                const currentCourse = getCourseForSlot(dayIndex, time);
+                const previousCourse = getCourseForSlot(dayIndex, timeSlots[timeIndex - 1]);
+                
+                if (currentCourse && previousCourse &&
+                    currentCourse.matiere === previousCourse.matiere &&
+                    currentCourse.prof === previousCourse.prof &&
+                    currentCourse.salle === previousCourse.salle) {
+                  return null; // Cette cellule est fusionnée avec la précédente
+                }
+              }
+              
+              // Calculer combien de créneaux ce cours occupe
+              const course = getCourseForSlot(dayIndex, time);
+              let rowSpan = 1;
+              
+              if (course) {
+                for (let j = timeIndex + 1; j < timeSlots.length; j++) {
+                  const nextCourse = getCourseForSlot(dayIndex, timeSlots[j]);
+                  if (nextCourse &&
+                      nextCourse.matiere === course.matiere &&
+                      nextCourse.prof === course.prof &&
+                      nextCourse.salle === course.salle) {
+                    rowSpan++;
+                  } else {
+                    break;
+                  }
+                }
+              }
               
               return (
-                <div 
+                <div
                   key={`${day}-${time}`}
+                  style={{
+                    gridRow: rowSpan > 1 ? `span ${rowSpan}` : undefined
+                  }}
                   className={`p-3 min-h-[60px] border-2 rounded-lg transition-colors duration-200 ${
-                    course 
-                      ? 'bg-purple-50 border-purple-300 hover:bg-purple-100' 
+                    course
+                      ? 'bg-purple-50 border-purple-300 hover:bg-purple-100'
                       : 'border-dashed border-gray-200 hover:border-purple-300 hover:bg-purple-50'
                   }`}
                 >
@@ -193,7 +225,16 @@ const ScheduleGrid = () => {
                           .join(' ')
                       }</div>
                       <div className="text-purple-600 text-xs">{course.salle}</div>
-                      <div className="text-gray-500 text-xs mt-1">{course.heure}</div>
+                      <div className="text-gray-500 text-xs mt-1">
+                        {(() => {
+                          // On récupère l'heure de début du premier créneau
+                          const startTime = time;
+                          // On calcule l'heure de fin en fonction du rowSpan
+                          const endTimeIndex = timeIndex + (rowSpan - 1);
+                          const endTime = timeSlots[endTimeIndex];
+                          return `${startTime}-${endTime}`;
+                        })()}
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center text-gray-400 text-sm h-full">

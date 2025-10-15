@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ComposePage.css';
 
-function ComposePage({ sessionId, user, onLogout }) {
+function ComposePage() {
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
@@ -27,8 +27,7 @@ function ComposePage({ sessionId, user, onLogout }) {
       const response = await fetch('/api/emails/send', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-session-id': sessionId
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ to, subject, body })
       });
@@ -60,15 +59,7 @@ function ComposePage({ sessionId, user, onLogout }) {
         <div className="header-left">
           <h1>🦉 Hedwige</h1>
         </div>
-        <div className="header-right">
-          {user && (
-            <div className="user-info">
-              {user.picture && <img src={user.picture} alt={user.name} />}
-              <span>{user.name}</span>
-            </div>
-          )}
-          <button onClick={onLogout} className="logout-btn">Logout</button>
-        </div>
+        {/* ...pas d'utilisateur ni de logout... */}
       </header>
 
       <div className="compose-content">

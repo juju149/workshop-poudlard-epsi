@@ -4,7 +4,7 @@ import EmailList from '../components/EmailList';
 import EmailDetail from '../components/EmailDetail';
 import '../styles/MailboxPage.css';
 
-function MailboxPage({ sessionId, user, onLogout }) {
+function MailboxPage() {
   const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,18 +13,14 @@ function MailboxPage({ sessionId, user, onLogout }) {
 
   useEffect(() => {
     fetchEmails();
-  }, [sessionId]);
+  }, []);
 
   const fetchEmails = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/emails?maxResults=20', {
-        headers: {
-          'x-session-id': sessionId
-        }
-      });
+      const response = await fetch('/api/emails?maxResults=20');
 
       const data = await response.json();
 
@@ -42,14 +38,8 @@ function MailboxPage({ sessionId, user, onLogout }) {
 
   const handleEmailClick = async (emailId) => {
     try {
-      const response = await fetch(`/api/emails/${emailId}`, {
-        headers: {
-          'x-session-id': sessionId
-        }
-      });
-
+      const response = await fetch(`/api/emails/${emailId}`);
       const data = await response.json();
-
       if (response.ok) {
         setSelectedEmail(data);
       } else {
@@ -74,15 +64,7 @@ function MailboxPage({ sessionId, user, onLogout }) {
         <div className="header-left">
           <h1>🦉 Hedwige</h1>
         </div>
-        <div className="header-right">
-          {user && (
-            <div className="user-info">
-              {user.picture && <img src={user.picture} alt={user.name} />}
-              <span>{user.name}</span>
-            </div>
-          )}
-          <button onClick={onLogout} className="logout-btn">Logout</button>
-        </div>
+        {/* ...pas d'utilisateur ni de logout... */}
       </header>
 
       <div className="mailbox-content">

@@ -680,46 +680,115 @@ Suivre exactement le template du fichier agents/AGENTS.md.
 
 ---
 
-## 📊 Résumé des prompts
+## 🔹 Prompts & résultats – 15 octobre 2025
 
-| # | Objectif | Fichiers générés | Complexité |
-|---|----------|------------------|------------|
-| 1 | Architecture | - | Moyenne |
-| 2-4 | Backend | server.js, routes/*.js | Haute |
-| 5-10 | Frontend | React components, pages | Haute |
-| 11-12 | Tests | tests/*.test.js(x) | Moyenne |
-| 13-14 | Docker | Dockerfiles, compose | Moyenne |
-| 15-16 | Config & Scripts | nginx.conf, test scripts | Moyenne |
-| 17-20 | Documentation | README, docs/*.md | Faible |
+### Prompt utilisateur :
 
-**Total prompts**: 20  
-**Temps estimé**: ~4 heures  
-**Lignes de code générées**: ~3000+
+On va modifier le provider pour se connecter avec Outlook plutôt, je veux pouvoir envoyer des mails à partir de mon adresse mail/mot de passe, ils seront écrits en dur dans le code
+Je veux pouvoir envoyer et recevoir des mails
+
+**Résultat Copilot :**
+- Ajout de nodemailer et imap-simple
+- Modification du backend pour Outlook SMTP/IMAP
+- Variables d'environnement pour le mail et le mot de passe
+- Suppression de la logique Google/Gmail
+- Adaptation du docker-compose
 
 ---
 
-## 🎯 Méthodologie
+### Prompt utilisateur :
 
-1. **Conception**: Architecture et technologies
-2. **Backend**: API et routes
-3. **Frontend**: Interface utilisateur
-4. **Tests**: Unitaires et intégration
-5. **Infrastructure**: Docker et déploiement
-6. **Documentation**: Complète et détaillée
+Déjà ajoute moi des variables d'environnement pour le mail et le mot de passe
 
----
-
-## 💡 Leçons apprises
-
-- Décomposer en petits prompts spécifiques
-- Fournir des exemples dans les prompts
-- Spécifier les technologies exactes
-- Demander des tests avec le code
-- Documenter au fur et à mesure
+**Résultat Copilot :**
+- Ajout des variables OUTLOOK_EMAIL et OUTLOOK_PASSWORD dans le backend
+- Création du fichier .env et .env.example
 
 ---
 
-**Note**: Tous les prompts ont été utilisés avec GitHub Copilot dans l'éditeur VSCode et via l'interface de chat Copilot.
+### Prompt utilisateur :
 
-**Date de création**: 13 octobre 2025  
-**Version**: 1.0.0
+Oui vérifie et modifie le .env.example pour le match
+
+**Résultat Copilot :**
+- Synchronisation des variables entre .env et .env.example
+
+---
+
+### Prompt utilisateur :
+
+supprime la partie google aussi
+
+**Résultat Copilot :**
+- Suppression des variables Google OAuth et Gmail du .env.example
+
+---
+
+### Prompt utilisateur :
+
+Le session secret sert à rien vérifie
+
+**Résultat Copilot :**
+- Vérification de l'utilisation de SESSION_SECRET
+- Suppression de SESSION_SECRET du .env.example et du docker-compose
+
+---
+
+### Prompt utilisateur :
+
+supprime là et clean le docker compose au niveau des variables d'environnement
+
+**Résultat Copilot :**
+- Suppression de SESSION_SECRET
+- Nettoyage du docker-compose (suppression Google et SESSION_SECRET, ajout Outlook)
+
+---
+
+### Prompt utilisateur :
+
+Alors maintenant on va delete la page de login comme c'est écrit en dur, tu récupères directement mes mails lors du lancement de l'app
+
+**Résultat Copilot :**
+- Suppression de LoginPage.jsx
+- Modification de App.jsx pour accès direct à la boîte mail
+
+---
+
+### Prompt utilisateur :
+
+j'ai trouvé le problème, le .env est pas correctement récupéré dans le fichier email.js
+
+**Résultat Copilot :**
+- Ajout de dotenv dans email.js
+
+---
+
+### Prompt utilisateur :
+
+là j'ai un .env qui contient l'url du frontend aussi faudrait en faire 2 ou le déplacer
+
+**Résultat Copilot :**
+- Création d'un .env pour le frontend
+- Suppression de FRONTEND_URL du backend
+- Création de .env et .env.example dans le frontend
+- Nettoyage du .env backend
+
+---
+
+### Prompt utilisateur :
+
+ajoute un .env.example dans le frontend
+
+**Résultat Copilot :**
+- Ajout de .env.example dans src/frontend
+
+---
+
+### Prompt utilisateur :
+
+Maintenant adapte le docker compose avec tout ça
+
+**Résultat Copilot :**
+- Adaptation du docker-compose pour séparer les variables frontend/backend
+
+---

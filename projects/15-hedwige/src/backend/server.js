@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.js';
 import emailRoutes from './routes/email.js';
 
 dotenv.config();
@@ -26,7 +25,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Hedwige API is running' });
 });
 
-app.use('/api/auth', authRoutes);
 app.use('/api/emails', emailRoutes);
 
 // Error handling middleware

@@ -1,155 +1,58 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
-import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
-import { tokenStore } from './auth.js';
+import imaps from 'imap-simple';
 
 const router = express.Router();
 
-/**
- * Middleware to verify session
- */
-const verifySession = (req, res, next) => {
-  const sessionId = req.headers['x-session-id'];
-  
-  if (!sessionId) {
-    return res.status(401).json({ error: 'Session ID is required' });
-  }
+// Adresse et mot de passe Outlook via variables d'environnement
+const OUTLOOK_EMAIL = process.env.OUTLOOK_EMAIL;
+const OUTLOOK_PASSWORD = process.env.OUTLOOK_PASSWORD;
 
-  const session = tokenStore.get(sessionId);
-  if (!session) {
-    return res.status(401).json({ error: 'Invalid session' });
-  }
-
-  req.session = session;
-  next();
-};
 
 /**
  * @route   GET /api/emails
- * @desc    List emails from Gmail
+ * @desc    Liste les emails depuis Outlook (IMAP)
  * @access  Private
  */
-router.get('/', verifySession, async (req, res) => {
+router.get('/', async (req, res) => {
+  const { maxResults = 10 } = req.query;
+  const config = {
+    imap: {
+      user: OUTLOOK_EMAIL,
+      password: OUTLOOK_PASSWORD,
+      host: 'outlook.office365.com',
+      port: 993,
+      tls: true,
+      authTimeout: 10000
+    }
+  };
   try {
-    const { maxResults = 10 } = req.query;
-    
-    const oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI
-    );
-    oauth2Client.setCredentials(req.session.tokens);
-
-    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-    
-    // List messages
-    const response = await gmail.users.messages.list({
-      userId: 'me',
-      maxResults: parseInt(maxResults)
-    });
-
-    const messages = response.data.messages || [];
-    
-    // Get details for each message
-    const emailPromises = messages.map(async (msg) => {
-      const detail = await gmail.users.messages.get({
-        userId: 'me',
-        id: msg.id,
-        format: 'full'
-      });
-      
-      const headers = detail.data.payload.headers;
-      const subject = headers.find(h => h.name === 'Subject')?.value || 'No Subject';
-      const from = headers.find(h => h.name === 'From')?.value || 'Unknown';
-      const date = headers.find(h => h.name === 'Date')?.value || '';
-      const to = headers.find(h => h.name === 'To')?.value || '';
-      
-      // Get body
-      let body = '';
-      if (detail.data.payload.body?.data) {
-        body = Buffer.from(detail.data.payload.body.data, 'base64').toString('utf-8');
-      } else if (detail.data.payload.parts) {
-        const textPart = detail.data.payload.parts.find(part => part.mimeType === 'text/plain');
-        if (textPart?.body?.data) {
-          body = Buffer.from(textPart.body.data, 'base64').toString('utf-8');
-        }
-      }
-      
+    const connection = await imaps.connect(config);
+    await connection.openBox('INBOX');
+    const searchCriteria = ['ALL'];
+    const fetchOptions = {
+      bodies: ['HEADER', 'TEXT'],
+      struct: true
+    };
+    const messages = await connection.search(searchCriteria, fetchOptions);
+    const emails = messages.slice(0, maxResults).map(item => {
+      const header = item.parts.find(part => part.which === 'HEADER');
+      const text = item.parts.find(part => part.which === 'TEXT');
       return {
-        id: msg.id,
-        threadId: detail.data.threadId,
-        subject,
-        from,
-        to,
-        date,
-        snippet: detail.data.snippet,
-        body: body.substring(0, 500) // Limit body preview
+        subject: header?.body.subject?.[0] || '',
+        from: header?.body.from?.[0] || '',
+        to: header?.body.to?.[0] || '',
+        date: header?.body.date?.[0] || '',
+        body: text?.body?.substring(0, 500) || '',
+        id: item.attributes.uid
       };
     });
-
-    const emails = await Promise.all(emailPromises);
-    
-    res.json({ emails, total: messages.length });
+    res.json({ emails, total: emails.length });
   } catch (error) {
     console.error('Error fetching emails:', error);
     res.status(500).json({ error: 'Failed to fetch emails' });
-  }
-});
-
-/**
- * @route   GET /api/emails/:id
- * @desc    Get single email by ID
- * @access  Private
- */
-router.get('/:id', verifySession, async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI
-    );
-    oauth2Client.setCredentials(req.session.tokens);
-
-    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-    
-    const detail = await gmail.users.messages.get({
-      userId: 'me',
-      id: id,
-      format: 'full'
-    });
-    
-    const headers = detail.data.payload.headers;
-    const subject = headers.find(h => h.name === 'Subject')?.value || 'No Subject';
-    const from = headers.find(h => h.name === 'From')?.value || 'Unknown';
-    const date = headers.find(h => h.name === 'Date')?.value || '';
-    const to = headers.find(h => h.name === 'To')?.value || '';
-    
-    // Get body
-    let body = '';
-    if (detail.data.payload.body?.data) {
-      body = Buffer.from(detail.data.payload.body.data, 'base64').toString('utf-8');
-    } else if (detail.data.payload.parts) {
-      const textPart = detail.data.payload.parts.find(part => part.mimeType === 'text/plain');
-      if (textPart?.body?.data) {
-        body = Buffer.from(textPart.body.data, 'base64').toString('utf-8');
-      }
-    }
-    
-    res.json({
-      id: detail.data.id,
-      threadId: detail.data.threadId,
-      subject,
-      from,
-      to,
-      date,
-      snippet: detail.data.snippet,
-      body
-    });
-  } catch (error) {
-    console.error('Error fetching email:', error);
-    res.status(500).json({ error: 'Failed to fetch email' });
   }
 });
 
@@ -158,52 +61,33 @@ router.get('/:id', verifySession, async (req, res) => {
  * @desc    Send an email
  * @access  Private
  */
-router.post('/send', verifySession, async (req, res) => {
+router.post('/send', async (req, res) => {
   try {
     const { to, subject, body } = req.body;
-
     if (!to || !subject || !body) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: to, subject, body' 
-      });
+      return res.status(400).json({ error: 'Missing required fields: to, subject, body' });
     }
 
-    const oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI
-    );
-    oauth2Client.setCredentials(req.session.tokens);
-
-    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-
-    // Create email in RFC 2822 format
-    const email = [
-      `From: ${req.session.user.email}`,
-      `To: ${to}`,
-      `Subject: ${subject}`,
-      '',
-      body
-    ].join('\n');
-
-    const encodedEmail = Buffer.from(email)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-
-    const result = await gmail.users.messages.send({
-      userId: 'me',
-      requestBody: {
-        raw: encodedEmail
+    // Création du transporteur SMTP Outlook
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: OUTLOOK_EMAIL,
+        pass: OUTLOOK_PASSWORD
       }
     });
 
-    res.json({ 
-      message: 'Email sent successfully',
-      id: result.data.id,
-      threadId: result.data.threadId
+    // Envoi du mail
+    const info = await transporter.sendMail({
+      from: OUTLOOK_EMAIL,
+      to,
+      subject,
+      text: body
     });
+
+    res.json({ message: 'Email sent successfully', id: info.messageId });
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send email' });

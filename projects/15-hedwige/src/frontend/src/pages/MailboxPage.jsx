@@ -5,55 +5,54 @@ import EmailDetail from '../components/EmailDetail';
 import '../styles/MailboxPage.css';
 
 function MailboxPage() {
-  const [emails, setEmails] = useState([]);
+  const [tab, setTab] = useState('received');
   const [selectedEmail, setSelectedEmail] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const sessionId = localStorage.getItem('sessionId');
 
-  useEffect(() => {
-    fetchEmails();
-  }, []);
-
-  const fetchEmails = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch('/api/emails?maxResults=20', {
-        headers: {
-          'Authorization': `Bearer ${sessionId}`
-        }
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setEmails(data.emails || []);
-      } else {
-        setError(data.error || 'Failed to fetch emails');
-      }
-    } catch (err) {
-      setError('Failed to connect to server');
-    } finally {
-      setLoading(false);
+  // Mocks de mails reçus
+  const receivedEmails = [
+    {
+      id: 1,
+      from: 'Minerva McGonagall <mcgonagall@poudlard.fr>',
+      to: 'Harry Potter <harry@poudlard.fr>',
+      subject: 'Bienvenue à Poudlard',
+      date: '2025-10-10T10:00:00Z',
+      body: 'Cher Harry, bienvenue à Poudlard!'
+    },
+    {
+      id: 2,
+      from: 'Hermione Granger <hermione@poudlard.fr>',
+      to: 'Harry Potter <harry@poudlard.fr>',
+      subject: 'Devoirs',
+      date: '2025-10-11T12:00:00Z',
+      body: 'N’oublie pas tes devoirs de potions!'
     }
-  };
+  ];
 
-  const handleEmailClick = async (emailId) => {
-    try {
-      const response = await fetch(`/api/emails/${emailId}`, {
-        headers: {
-          'Authorization': `Bearer ${sessionId}`
-        }
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setSelectedEmail(data);
-      } else {
-        setError(data.error || 'Failed to fetch email');
-      }
-    } catch (err) {
-      setError('Failed to load email');
+  // Mocks de mails envoyés
+  const sentEmails = [
+    {
+      id: 101,
+      from: 'Harry Potter <harry@poudlard.fr>',
+      to: 'Minerva McGonagall <mcgonagall@poudlard.fr>',
+      subject: 'Merci !',
+      date: '2025-10-12T09:00:00Z',
+      body: 'Merci pour la lettre de bienvenue.'
+    },
+    {
+      id: 102,
+      from: 'Harry Potter <harry@poudlard.fr>',
+      to: 'Hermione Granger <hermione@poudlard.fr>',
+      subject: 'Réponse devoirs',
+      date: '2025-10-12T10:00:00Z',
+      body: 'Merci Hermione, je vais m’y mettre !'
     }
+  ];
+
+  const handleEmailClick = (emailId) => {
+    const emails = tab === 'received' ? receivedEmails : sentEmails;
+    const email = emails.find(e => e.id === emailId);
+    setSelectedEmail(email);
   };
 
   const handleBackToList = () => {
@@ -85,24 +84,24 @@ function MailboxPage() {
           <button className="compose-btn" onClick={handleCompose}>
             ✉️ Compose
           </button>
-          <button className="refresh-btn" onClick={fetchEmails}>
-            🔄 Refresh
-          </button>
+          <div className="mailbox-tabs sidebar-tabs">
+            <button
+              className={tab === 'received' ? 'tab-active' : ''}
+              onClick={() => { setSelectedEmail(null); setTab('received'); }}
+            >📥 Mail reçu</button>
+            <button
+              className={tab === 'sent' ? 'tab-active' : ''}
+              onClick={() => { setSelectedEmail(null); setTab('sent'); }}
+            >📤 Mail envoyé</button>
+          </div>
         </div>
 
         <div className="mailbox-main">
-          {loading ? (
-            <div className="loading">Loading emails...</div>
-          ) : error ? (
-            <div className="error">{error}</div>
-          ) : selectedEmail ? (
-            <EmailDetail 
-              email={selectedEmail} 
-              onBack={handleBackToList} 
-            />
+          {selectedEmail ? (
+            <EmailDetail email={selectedEmail} onBack={handleBackToList} />
           ) : (
-            <EmailList 
-              emails={emails} 
+            <EmailList
+              emails={tab === 'received' ? receivedEmails : sentEmails}
               onEmailClick={handleEmailClick}
             />
           )}

@@ -842,3 +842,31 @@ Je vais corriger les tests pour encapsuler chaque page dans un <MemoryRouter> af
 ```
 ajoute ces prompts au /docs/prompt used
 ```
+
+---
+
+## 🔹 Prompts – Ajout et amélioration des onglets dans la boîte de réception
+
+**Date**: 2025-10-15  
+**Outil**: GitHub Copilot  
+**Objectif**: Ajouter deux onglets (Mail reçu et Mail envoyé) avec des mocks de données
+
+```
+Ajoute juste 2 tab, Mail envoyé et Mail reçu avec des mocks de données
+```
+
+**Date**: 2025-10-15  
+**Outil**: GitHub Copilot  
+**Objectif**: Déplacer les onglets sous le bouton Compose dans la sidebar
+
+```
+Alors c'est nickel juste mets les tabs sous le Compose au lieu d'en plein milieu
+```
+
+**Date**: 2025-10-15  
+**Outil**: GitHub Copilot  
+**Objectif**: Mettre les boutons d'onglets en forme moderne
+
+```
+Okay nickel, mets juste les boutons en forme
+```

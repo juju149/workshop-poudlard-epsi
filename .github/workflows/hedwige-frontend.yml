@@ -50,8 +50,6 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: projects/15-hedwige/src/frontend
-          organization: juju149
-          projectKey: juju149_workshop-poudlard-epsi
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 

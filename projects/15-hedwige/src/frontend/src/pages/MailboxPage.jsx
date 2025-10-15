@@ -10,6 +10,7 @@ function MailboxPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const sessionId = localStorage.getItem('sessionId');
 
   useEffect(() => {
     fetchEmails();
@@ -19,11 +20,12 @@ function MailboxPage() {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await fetch('/api/emails?maxResults=20');
-
+      const response = await fetch('/api/emails?maxResults=20', {
+        headers: {
+          'Authorization': `Bearer ${sessionId}`
+        }
+      });
       const data = await response.json();
-
       if (response.ok) {
         setEmails(data.emails || []);
       } else {
@@ -38,7 +40,11 @@ function MailboxPage() {
 
   const handleEmailClick = async (emailId) => {
     try {
-      const response = await fetch(`/api/emails/${emailId}`);
+      const response = await fetch(`/api/emails/${emailId}`, {
+        headers: {
+          'Authorization': `Bearer ${sessionId}`
+        }
+      });
       const data = await response.json();
       if (response.ok) {
         setSelectedEmail(data);
@@ -54,6 +60,11 @@ function MailboxPage() {
     setSelectedEmail(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('sessionId');
+    navigate('/login');
+  };
+
   const handleCompose = () => {
     navigate('/compose');
   };
@@ -64,7 +75,9 @@ function MailboxPage() {
         <div className="header-left">
           <h1>🦉 Hedwige</h1>
         </div>
-        {/* ...pas d'utilisateur ni de logout... */}
+        <div className="header-right">
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        </div>
       </header>
 
       <div className="mailbox-content">

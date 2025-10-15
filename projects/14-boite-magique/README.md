@@ -279,7 +279,7 @@ Ce projet est développé dans le cadre du Workshop EPSI/WIS 2025.
 
 ## Historique complet des échanges
 
-**Prompt 1 :** comment j'exécute ce ficier  
+**Prompt 1 :** comment j'exécute ce fichier  
 **Réponse :** J'ai expliqué comment rendre le script `build.sh` exécutable avec `chmod +x build.sh` et comment l'exécuter avec `./build.sh`. J'ai aussi corrigé une erreur de compilation liée à `stdc++fs` sur macOS en modifiant le CMakeLists.txt pour exclure cette bibliothèque sur macOS.
 
 **Prompt 2 :** quand j'archive, c'est envoyé où ?  

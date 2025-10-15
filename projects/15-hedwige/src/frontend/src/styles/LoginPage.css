@@ -1,3 +1,9 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  margin-bottom: 2.4rem;
+}
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -39,6 +45,23 @@
   margin-bottom: 20px;
   text-align: center;
 }
+.login-btn {
+  padding: 0.8rem 2.2rem;
+  background: linear-gradient(90deg, #6c63ff 0%, #48c6ef 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(76, 110, 245, 0.12);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.login-btn:hover {
+  background: linear-gradient(90deg, #5548c8 0%, #48c6ef 100%);
+  transform: translateY(-2px) scale(1.04);
 
 .google-login-btn {
   width: 100%;

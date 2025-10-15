@@ -10,30 +10,27 @@ function ComposePage() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const sessionId = localStorage.getItem('sessionId');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!to || !subject || !body) {
       setError('Please fill in all fields');
       return;
     }
-
     try {
       setSending(true);
       setError(null);
       setSuccess(false);
-
       const response = await fetch('/api/emails/send', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionId}`
         },
         body: JSON.stringify({ to, subject, body })
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setSuccess(true);
         setTimeout(() => {

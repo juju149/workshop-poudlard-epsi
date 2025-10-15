@@ -1,0 +1,63 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmailDetail > correspond au snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="email-detail"
+  >
+    <div
+      class="email-detail-header"
+    >
+      <button
+        class="back-btn"
+      >
+        ← Back to Inbox
+      </button>
+    </div>
+    <div
+      class="email-detail-content"
+    >
+      <h2
+        class="email-detail-subject"
+      >
+        Bienvenue à Poudlard
+      </h2>
+      <div
+        class="email-detail-meta"
+      >
+        <div
+          class="email-from-info"
+        >
+          <strong>
+            Minerva McGonagall
+          </strong>
+          <span
+            class="email-address"
+          >
+            &lt;mcgonagall@poudlard.fr&gt;
+          </span>
+        </div>
+        <div
+          class="email-to-info"
+        >
+          <span>
+            To: Harry Potter &lt;harry@poudlard.fr&gt;
+          </span>
+        </div>
+        <div
+          class="email-date-info"
+        >
+          Fri, Oct 10, 2025, 12:00 PM
+        </div>
+      </div>
+      <div
+        class="email-body"
+      >
+        <pre>
+          Cher Harry, bienvenue à Poudlard!
+        </pre>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,96 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ComposePage > correspond au snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="compose-page"
+  >
+    <header
+      class="compose-header"
+    >
+      <div
+        class="header-left"
+      >
+        <h1>
+          🦉 Hedwige
+        </h1>
+      </div>
+    </header>
+    <div
+      class="compose-content"
+    >
+      <div
+        class="compose-container"
+      >
+        <h2>
+          New Message
+        </h2>
+        <form
+          class="compose-form"
+        >
+          <div
+            class="form-group"
+          >
+            <label
+              for="to"
+            >
+              To:
+            </label>
+            <input
+              id="to"
+              placeholder="recipient@example.com"
+              type="email"
+              value=""
+            />
+          </div>
+          <div
+            class="form-group"
+          >
+            <label
+              for="subject"
+            >
+              Subject:
+            </label>
+            <input
+              id="subject"
+              placeholder="Email subject"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="form-group"
+          >
+            <label
+              for="body"
+            >
+              Message:
+            </label>
+            <textarea
+              id="body"
+              placeholder="Write your message here..."
+              rows="15"
+            />
+          </div>
+          <div
+            class="form-actions"
+          >
+            <button
+              class="send-btn"
+              type="submit"
+            >
+              Send Email
+            </button>
+            <button
+              class="cancel-btn"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,124 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MailboxPage > correspond au snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mailbox-page"
+  >
+    <header
+      class="mailbox-header"
+    >
+      <div
+        class="header-left"
+      >
+        <h1>
+          🦉 Hedwige
+        </h1>
+      </div>
+      <div
+        class="header-right"
+      >
+        <button
+          class="logout-btn"
+        >
+          Logout
+        </button>
+      </div>
+    </header>
+    <div
+      class="mailbox-content"
+    >
+      <div
+        class="mailbox-sidebar"
+      >
+        <button
+          class="compose-btn"
+        >
+          ✉️ Compose
+        </button>
+        <div
+          class="mailbox-tabs sidebar-tabs"
+        >
+          <button
+            class="tab-active"
+          >
+            📥 Mail reçu
+          </button>
+          <button
+            class=""
+          >
+            📤 Mail envoyé
+          </button>
+        </div>
+      </div>
+      <div
+        class="mailbox-main"
+      >
+        <div
+          class="email-list"
+        >
+          <h2>
+            Inbox (2)
+          </h2>
+          <div
+            class="email-items"
+          >
+            <div
+              class="email-item"
+            >
+              <div
+                class="email-item-header"
+              >
+                <span
+                  class="email-from"
+                >
+                  Minerva McGonagall
+                </span>
+                <span
+                  class="email-date"
+                >
+                  Fri
+                </span>
+              </div>
+              <div
+                class="email-subject"
+              >
+                Bienvenue à Poudlard
+              </div>
+              <div
+                class="email-snippet"
+              />
+            </div>
+            <div
+              class="email-item"
+            >
+              <div
+                class="email-item-header"
+              >
+                <span
+                  class="email-from"
+                >
+                  Hermione Granger
+                </span>
+                <span
+                  class="email-date"
+                >
+                  Sat
+                </span>
+              </div>
+              <div
+                class="email-subject"
+              >
+                Devoirs
+              </div>
+              <div
+                class="email-snippet"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

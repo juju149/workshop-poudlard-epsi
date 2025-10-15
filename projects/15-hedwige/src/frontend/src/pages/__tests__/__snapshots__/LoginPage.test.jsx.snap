@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoginPage > correspond au snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="login-page"
+  >
+    <div
+      class="login-container"
+    >
+      <div
+        class="login-header"
+      >
+        <h1>
+          🦉 Hedwige
+        </h1>
+        <p>
+          Connecte-toi à ta boîte Outlook
+        </p>
+      </div>
+      <form
+        class="login-form"
+      >
+        <div
+          class="form-group"
+        >
+          <label
+            for="email"
+          >
+            Adresse Outlook
+          </label>
+          <input
+            id="email"
+            placeholder="exemple@outlook.com"
+            required=""
+            type="email"
+            value=""
+          />
+        </div>
+        <div
+          class="form-group"
+        >
+          <label
+            for="password"
+          >
+            Mot de passe
+          </label>
+          <input
+            id="password"
+            placeholder="Mot de passe Outlook"
+            required=""
+            type="password"
+            value=""
+          />
+        </div>
+        <button
+          class="login-btn"
+          type="submit"
+        >
+          Se connecter
+        </button>
+      </form>
+    </div>
+  </div>
+</DocumentFragment>
+`;

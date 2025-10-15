@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmailList > correspond au snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="email-list"
+  >
+    <h2>
+      Inbox (2)
+    </h2>
+    <div
+      class="email-items"
+    >
+      <div
+        class="email-item"
+      >
+        <div
+          class="email-item-header"
+        >
+          <span
+            class="email-from"
+          >
+            Harry Potter
+          </span>
+          <span
+            class="email-date"
+          >
+            Fri
+          </span>
+        </div>
+        <div
+          class="email-subject"
+        >
+          Bienvenue à Poudlard
+        </div>
+        <div
+          class="email-snippet"
+        />
+      </div>
+      <div
+        class="email-item"
+      >
+        <div
+          class="email-item-header"
+        >
+          <span
+            class="email-from"
+          >
+            Hermione Granger
+          </span>
+          <span
+            class="email-date"
+          >
+            Sat
+          </span>
+        </div>
+        <div
+          class="email-subject"
+        >
+          Devoirs
+        </div>
+        <div
+          class="email-snippet"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

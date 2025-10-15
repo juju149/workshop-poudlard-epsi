@@ -1,0 +1,178 @@
+.patronus-loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 600px;
+  background-color: transparent;
+  border-radius: 0.5rem;
+  padding: 2rem;
+}
+
+.patronus-container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  overflow: visible;
+  border-radius: 50%;
+  box-shadow: 0 0 30px #00f;
+}
+
+.patronus-container::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  border: 1.5px solid #00f;
+  box-sizing: border-box;
+  box-shadow: 0 0 12px 2px rgba(152, 152, 255, 0.873), 0 0 24px 4px #00f4;
+  opacity: 0.85;
+}
+
+.patronus-container::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 4;
+  box-sizing: border-box;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 335deg,
+    #00f 335deg 342deg,
+    #0af 342deg 348deg,
+    #6cf8 348deg 352deg,
+    #0af 352deg 358deg,
+    #00f 358deg 360deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 94%, #fff 96%, #fff 100%);
+  mask: radial-gradient(circle, transparent 94%, #fff 96%, #fff 100%);
+  filter: brightness(2.0) drop-shadow(0 0 6px #6cf8);
+  opacity: 0.95;
+  transform: rotate(0deg);
+  animation: lightPointSpin 1.8s linear infinite;
+}
+
+@keyframes lightPointSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.foret {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  background-image: url('https://www.zupimages.net/up/25/42/6jju.png');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  opacity: 0.97;
+}
+
+.fond {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+.blaireau {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%) scale(0.2);
+  background-image: url('https://www.zupimages.net/up/25/42/0p58.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(4px) brightness(0.00) contrast(0.8);
+  z-index: 3;
+  opacity: 0.11;
+  animation:
+    apparition 1.8s cubic-bezier(.4,0,.2,1) forwards,
+    flotter 2s ease-in-out infinite 1.8s;
+}
+
+@keyframes apparition {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); filter: brightness(2.8) blur(8px); }
+  60% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); filter: brightness(2.5) blur(2px); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); filter: brightness(2.2) blur(0.5px); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: brightness(2.2) blur(0); }
+}
+
+@keyframes flotter {
+  0% { transform: translate(-50%, -50%) scale(1);}
+  50% { transform: translate(-50%, -52%) scale(1.05);}
+  100% { transform: translate(-50%, -50%) scale(1);}
+}
+
+.voile {
+  position: absolute;
+  width: 180px;
+  height: 90px;
+  border-radius: 60% 70% 60% 70% / 70% 60% 70% 60%;
+  background: radial-gradient(ellipse at 50% 50%, #e0f8ffcc 80%, #aaf6ff 100%, #fff0 100%);
+  filter: blur(28px) brightness(1.1);
+  opacity: 0.32;
+  pointer-events: none;
+  animation: voileFly 3.2s ease-in-out forwards;
+}
+
+@keyframes voileFly {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translate(0,0) rotate(-10deg);
+  }
+  30% {
+    opacity: 0.35;
+    transform: scale(1.1) translate(10px, -10px) rotate(8deg);
+  }
+  70% {
+    opacity: 0.25;
+    transform: scale(1.2) translate(30px, -30px) rotate(-12deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translate(60px, -60px) rotate(20deg);
+  }
+}
+
+.patronus-text {
+  margin-top: 2rem;
+  color: #7c3aed;
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .patronus-container {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .patronus-text {
+    font-size: 0.875rem;
+  }
+}

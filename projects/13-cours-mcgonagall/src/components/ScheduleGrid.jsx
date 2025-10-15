@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import PatronusLoader from './PatronusLoader'
 
 const ScheduleGrid = () => {
   // Changer de semaine
@@ -106,12 +107,7 @@ const ScheduleGrid = () => {
   }
 
   if (loading) {
-    return (
-      <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Chargement de l'emploi du temps...</p>
-      </div>
-    )
+    return <PatronusLoader />
   }
 
   if (error) {

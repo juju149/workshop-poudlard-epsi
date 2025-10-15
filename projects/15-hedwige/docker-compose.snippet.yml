@@ -9,8 +9,6 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      OUTLOOK_EMAIL: ${OUTLOOK_EMAIL}
-      OUTLOOK_PASSWORD: ${OUTLOOK_PASSWORD}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]

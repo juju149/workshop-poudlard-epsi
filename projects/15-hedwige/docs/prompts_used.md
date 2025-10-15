@@ -792,3 +792,26 @@ Maintenant adapte le docker compose avec tout ça
 - Adaptation du docker-compose pour séparer les variables frontend/backend
 
 ---
+
+### Prompt utilisateur :
+
+Ajoute une page de login pour se co avec mon compte Outlook, ajoute un bouton de logout aussi, il me faudrait un middleware pour envoyer les mails après qui récupère un cookie ou autre.
+
+**Résultat Copilot :**
+- Création d'une page LoginPage.jsx pour Outlook
+- Ajout d'un bouton de logout dans MailboxPage.jsx
+- Ajout d'un middleware JWT pour sécuriser l'envoi de mails
+- Adaptation du backend pour générer et vérifier le JWT
+- Adaptation du frontend pour envoyer le JWT dans les requêtes
+
+---
+
+### Prompt utilisateur :
+
+Améliore le design du bouton de login et ajoute plus d'espacement entre les éléments
+
+**Résultat Copilot :**
+- Ajout d'un style moderne au bouton de login (gradient, animation)
+- Augmentation de l'espacement entre les éléments du formulaire de login
+
+---

@@ -279,7 +279,7 @@ Tests:
 ### Limitations actuelles
 
 ⚠️ Sessions en mémoire (non persistantes)
-⚠️ Pas de gestion des pièces jointes
+⚠️ Il n'est pas possible d'envoyer de fichiers ou pièces jointes (limitation technique actuelle)
 ⚠️ Pas de recherche avancée
 ⚠️ Pas de filtres/labels
 ⚠️ UI basique (pas de rich text editor)

@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true
 
       - name: Run unit tests
-        run: npm test
+        run: npm run test -- -u
         working-directory: projects/15-hedwige/src/frontend
 
       - name: Build project
@@ -50,13 +50,14 @@ jobs:
         run: docker run --rm -p 8080:80 hedwige-frontend
         working-directory: projects/15-hedwige/src/frontend
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v2
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: projects/15-hedwige/src/frontend
+          organization: juju149
+          projectKey: juju149_workshop-poudlard-epsi
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   deploy:
     needs: build-test-lint

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  character-recognition:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: harry-character-recognition
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - poudlard-network
+
+networks:
+  poudlard-network:
+    driver: bridge

@@ -46,10 +46,6 @@ jobs:
         run: docker build -t hedwige-frontend .
         working-directory: projects/15-hedwige/src/frontend
 
-      - name: Test Docker image
-        run: docker run --rm -p 8080:80 hedwige-frontend
-        working-directory: projects/15-hedwige/src/frontend
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:

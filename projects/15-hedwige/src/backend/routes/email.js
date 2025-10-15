@@ -6,9 +6,7 @@ import imaps from 'imap-simple';
 
 const router = express.Router();
 
-// Adresse et mot de passe Outlook via variables d'environnement
-const OUTLOOK_EMAIL = process.env.OUTLOOK_EMAIL;
-const OUTLOOK_PASSWORD = process.env.OUTLOOK_PASSWORD;
+
 
 
 /**
@@ -18,10 +16,16 @@ const OUTLOOK_PASSWORD = process.env.OUTLOOK_PASSWORD;
  */
 router.get('/', async (req, res) => {
   const { maxResults = 10 } = req.query;
+  // Utilise les infos du token vérifié
+  const userEmail = req.user?.email;
+  const userPassword = req.user?.password;
+  if (!userEmail || !userPassword) {
+    return res.status(401).json({ error: 'Identifiants Outlook manquants dans le token' });
+  }
   const config = {
     imap: {
-      user: OUTLOOK_EMAIL,
-      password: OUTLOOK_PASSWORD,
+      user: userEmail,
+      password: userPassword,
       host: 'outlook.office365.com',
       port: 993,
       tls: true,
@@ -69,19 +73,26 @@ router.post('/send', async (req, res) => {
     }
 
     // Création du transporteur SMTP Outlook
+
+    // Utilise les infos du token vérifié
+    const userEmail = req.user?.email;
+    const userPassword = req.user?.password;
+    if (!userEmail || !userPassword) {
+      return res.status(401).json({ error: 'Identifiants Outlook manquants dans le token' });
+    }
     const transporter = nodemailer.createTransport({
       host: 'smtp.office365.com',
       port: 587,
       secure: false,
       auth: {
-        user: OUTLOOK_EMAIL,
-        pass: OUTLOOK_PASSWORD
+        user: userEmail,
+        pass: userPassword
       }
     });
 
     // Envoi du mail
     const info = await transporter.sendMail({
-      from: OUTLOOK_EMAIL,
+      from: userEmail,
       to,
       subject,
       text: body

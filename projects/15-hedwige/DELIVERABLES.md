@@ -3,7 +3,7 @@
 ## 🎯 Résumé Exécutif
 
 Application web complète de gestion d'emails avec authentification OAuth2 Google, développée selon les standards du Workshop Poudlard EPSI/WIS.
-
+ 
 ---
 
 ## 📦 Livrables

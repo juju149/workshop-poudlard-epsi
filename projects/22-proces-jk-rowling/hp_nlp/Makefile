@@ -31,45 +31,45 @@ run: ## Exécuter tous les notebooks en séquence
 	@echo "$(GREEN)🚀 Exécution du pipeline NLP complet...$(NC)"
 	@echo ""
 	@echo "$(YELLOW)📖 Notebook 1: Ingestion et nettoyage$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/01_ingest_clean.ipynb --output 01_ingest_clean.ipynb
+	python -m nbconvert --to notebook --execute notebooks/01_ingest_clean.ipynb --output 01_ingest_clean.ipynb
 	@echo ""
 	@echo "$(YELLOW)🧠 Notebook 2: Pipeline NLP$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/02_nlp_pipeline.ipynb --output 02_nlp_pipeline.ipynb
+	python -m nbconvert --to notebook --execute notebooks/02_nlp_pipeline.ipynb --output 02_nlp_pipeline.ipynb
 	@echo ""
 	@echo "$(YELLOW)🔍 Notebook 3: Extraction d'événements$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/03_events_extraction.ipynb --output 03_events_extraction.ipynb
+	python -m nbconvert --to notebook --execute notebooks/03_events_extraction.ipynb --output 03_events_extraction.ipynb
 	@echo ""
 	@echo "$(YELLOW)📊 Notebook 4: Agrégation et visualisations$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/04_aggregation_viz.ipynb --output 04_aggregation_viz.ipynb
+	python -m nbconvert --to notebook --execute notebooks/04_aggregation_viz.ipynb --output 04_aggregation_viz.ipynb
 	@echo ""
 	@echo "$(YELLOW)📄 Notebook 5: Rapport méthodologique$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/05_methods_report.ipynb --output 05_methods_report.ipynb
+	python -m nbconvert --to notebook --execute notebooks/05_methods_report.ipynb --output 05_methods_report.ipynb
 	@echo ""
 	@echo "$(GREEN)✅ Pipeline terminé! Résultats dans outputs/$(NC)"
 
 run-nb1: ## Exécuter notebook 1 uniquement (ingestion)
 	@echo "$(GREEN)📖 Exécution: Ingestion et nettoyage$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/01_ingest_clean.ipynb --output 01_ingest_clean.ipynb
+	python -m nbconvert --to notebook --execute notebooks/01_ingest_clean.ipynb --output 01_ingest_clean.ipynb
 
 run-nb2: ## Exécuter notebook 2 uniquement (NLP)
 	@echo "$(GREEN)🧠 Exécution: Pipeline NLP$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/02_nlp_pipeline.ipynb --output 02_nlp_pipeline.ipynb
+	python -m nbconvert --to notebook --execute notebooks/02_nlp_pipeline.ipynb --output 02_nlp_pipeline.ipynb
 
 run-nb3: ## Exécuter notebook 3 uniquement (événements)
 	@echo "$(GREEN)🔍 Exécution: Extraction d'événements$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/03_events_extraction.ipynb --output 03_events_extraction.ipynb
+	python -m nbconvert --to notebook --execute notebooks/03_events_extraction.ipynb --output 03_events_extraction.ipynb
 
 run-nb4: ## Exécuter notebook 4 uniquement (visualisations)
 	@echo "$(GREEN)📊 Exécution: Agrégation et visualisations$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/04_aggregation_viz.ipynb --output 04_aggregation_viz.ipynb
+	python -m nbconvert --to notebook --execute notebooks/04_aggregation_viz.ipynb --output 04_aggregation_viz.ipynb
 
 run-nb5: ## Exécuter notebook 5 uniquement (rapport)
 	@echo "$(GREEN)📄 Exécution: Rapport méthodologique$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/05_methods_report.ipynb --output 05_methods_report.ipynb
+	python -m nbconvert --to notebook --execute notebooks/05_methods_report.ipynb --output 05_methods_report.ipynb
 
 report: ## Générer uniquement le rapport (suppose que les données existent)
 	@echo "$(GREEN)📄 Génération du rapport...$(NC)"
-	jupyter nbconvert --to notebook --execute notebooks/05_methods_report.ipynb --output 05_methods_report.ipynb
+	python -m nbconvert --to notebook --execute notebooks/05_methods_report.ipynb --output 05_methods_report.ipynb
 	@echo "$(GREEN)✅ Rapport généré: outputs/methodology_report.html$(NC)"
 
 open-report: ## Ouvrir le rapport HTML dans le navigateur

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./src/api
+    container_name: hogwarts-scores-api
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_PATH=/data/hogwarts.db
+    volumes:
+      - hogwarts-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  hogwarts-data:
+    driver: local

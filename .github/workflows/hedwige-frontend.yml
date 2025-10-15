@@ -1,0 +1,85 @@
+name: CI/CD Hedwige Frontend
+
+on:
+  push:
+    paths:
+      - 'projects/15-hedwige/src/frontend/**'
+  pull_request:
+    paths:
+      - 'projects/15-hedwige/src/frontend/**'
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Install ESLint & Airbnb config
+        run: |
+          npm install eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks --save-dev
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Run ESLint (Airbnb)
+        run: npx eslint src --ext .js,.jsx,.ts,.tsx
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Run unit tests
+        run: npm test
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Build project
+        run: npm run build
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Build Docker image
+        run: docker build -t hedwige-frontend .
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Test Docker image
+        run: docker run --rm -p 8080:80 hedwige-frontend
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: projects/15-hedwige/src/frontend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  deploy:
+    needs: build-test-lint
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Build project
+        run: npm run build
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: projects/15-hedwige/src/frontend/dist

@@ -815,3 +815,30 @@ Améliore le design du bouton de login et ajoute plus d'espacement entre les él
 - Augmentation de l'espacement entre les éléments du formulaire de login
 
 ---
+
+## 🔹 Prompts – Ajout de tests de non-régression frontend
+
+**Date**: 2025-10-15  
+**Outil**: GitHub Copilot  
+**Objectif**: Ajouter des tests de non-régression (snapshots) pour les pages principales du frontend
+
+```
+ajoute moi des tests de non-régression. pour le front
+```
+
+**Date**: 2025-10-15  
+**Outil**: GitHub Copilot  
+**Objectif**: Correction des tests pour le contexte Router
+
+```
+Les tests de non-régression pour les pages échouent car elles utilisent le hook useNavigate() de React Router, qui nécessite d’être rendu dans un contexte <Router>.
+Je vais corriger les tests pour encapsuler chaque page dans un <MemoryRouter> afin de fournir le contexte requis.
+```
+
+**Date**: 2025-10-15  
+**Outil**: GitHub Copilot  
+**Objectif**: Ajout des prompts à la documentation
+
+```
+ajoute ces prompts au /docs/prompt used
+```

@@ -1,0 +1,32 @@
+# Fichiers générés par Blender
+*.blend1
+*.blend2
+*.blend@
+*.blend~
+
+# Fichiers de rendu (généré par le script)
+hogwarts_plan.blend
+renders/*.mp4
+renders/*.avi
+renders/*.png
+renders/*.jpg
+
+# Fichiers temporaires
+*.log
+*.tmp
+*.bak
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Éditeur
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

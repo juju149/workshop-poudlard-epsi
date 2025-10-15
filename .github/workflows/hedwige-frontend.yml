@@ -46,10 +46,12 @@ jobs:
         run: docker build -t hedwige-frontend .
         working-directory: projects/15-hedwige/src/frontend
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: projects/15-hedwige/src/frontend
         env:
-          SONAR_TOKEN: 24d4fe6665dbc390c9a44abef7b2741a9c01e907
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   deploy:
     needs: build-test-lint

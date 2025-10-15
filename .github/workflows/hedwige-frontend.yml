@@ -30,8 +30,9 @@ jobs:
         working-directory: projects/15-hedwige/src/frontend
 
       - name: Run ESLint (Airbnb)
-        run: npx eslint src --ext .js,.jsx,.ts,.tsx || true
+        run: npx eslint src --ext .js,.jsx,.ts,.tsx
         working-directory: projects/15-hedwige/src/frontend
+        continue-on-error: true
 
       - name: Run unit tests
         run: npm test

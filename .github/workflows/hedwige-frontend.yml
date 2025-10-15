@@ -49,7 +49,7 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: 24d4fe6665dbc390c9a44abef7b2741a9c01e907
 
   deploy:
     needs: build-test-lint

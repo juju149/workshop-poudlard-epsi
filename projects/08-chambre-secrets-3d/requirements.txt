@@ -1,0 +1,15 @@
+# Dépendances pour le Défi 8: Chambre des Secrets 3D
+
+# Note: Blender inclut déjà son propre Python avec les modules nécessaires (bpy, mathutils)
+# Ce fichier est principalement documentaire pour référence
+
+# Blender 3.0+ (requis)
+# - Inclut Python 3.9+
+# - Inclut bpy (Blender Python API)
+# - Inclut mathutils
+
+# Pour développement/tests en dehors de Blender (optionnel):
+# Note: bpy fake-module pour auto-complétion dans IDE (ne permet pas d'exécuter)
+# fake-bpy-module-3.3  # Remplacer 3.3 par votre version de Blender
+
+# Pas de dépendances externes requises pour l'exécution du script

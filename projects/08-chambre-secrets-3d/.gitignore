@@ -1,0 +1,33 @@
+# Fichiers Blender générés
+*.blend1
+*.blend2
+*.blend@
+hogwarts_plan.blend
+
+# Rendus et sorties vidéo
+renders/
+*.mp4
+*.avi
+*.mov
+*.png
+*.jpg
+*.jpeg
+
+# Fichiers temporaires Blender
+__pycache__/
+*.pyc
+*.pyo
+.cache/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Props générés (si ajoutés automatiquement)
+props/*.blend

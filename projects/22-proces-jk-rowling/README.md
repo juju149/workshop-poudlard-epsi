@@ -6,7 +6,30 @@
 
 Extraire et analyser les statistiques textuelles des 7 livres Harry Potter pour révéler des tendances amusantes et discutables dans l'écriture de J.K. Rowling.
 
-## 📊 Statistiques Analysées
+## 🚀 **NOUVEAU : Pipeline NLP Neuronal**
+
+Une version moderne de l'analyse utilisant des techniques NLP avancées est maintenant disponible dans `hp_nlp/` :
+
+- 📘 **5 notebooks Jupyter** pour une analyse complète et reproductible
+- 🧠 **spaCy + NER** pour reconnaissance d'entités et attribution de locuteur
+- 📊 **Visualisations avancées** (matplotlib, seaborn, plotly)
+- 📄 **Rapport automatique** généré en HTML/PDF
+- 🔧 **Makefile** pour automatisation complète
+
+👉 **[Voir le README du pipeline NLP](hp_nlp/README.md)** pour les détails et l'utilisation.
+
+```bash
+# Installation et exécution rapide
+cd hp_nlp/
+make setup  # Installer dépendances
+make run    # Exécuter pipeline complet
+```
+
+---
+
+## 📦 Version Originale (Regex)
+
+### Statistiques Analysées (version originale)
 
 1. **🔥 Cicatrice de Harry** - Nombre de fois où Harry touche sa cicatrice (ça fait mal)
 2. **💬 Hermione et "Mais"** - Nombre de fois où Hermione dit "Mais" (elle est insupportable)
@@ -17,7 +40,7 @@ Extraire et analyser les statistiques textuelles des 7 livres Harry Potter pour 
 7. **📈 Tendances par livre** - Évolution des statistiques à travers la saga
 8. **📄 Normalisation** - Statistiques par 100 pages pour comparer équitablement
 
-## 🏗️ Architecture
+### 🏗️ Architecture (version originale)
 
 ```
 22-proces-jk-rowling/

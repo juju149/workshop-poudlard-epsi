@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`PatronusLoader devrait correspondre au snapshot 1`] = `
+<div>
+  <div
+    class="patronus-loader-wrapper"
+  >
+    <div
+      class="patronus-container"
+      id="container"
+    >
+      <div
+        class="foret"
+      />
+      <div
+        class="fond"
+      />
+      <div
+        class="blaireau"
+      />
+    </div>
+    <p
+      class="patronus-text"
+    >
+      Chargement de l'emploi du temps...
+    </p>
+  </div>
+</div>
+`;

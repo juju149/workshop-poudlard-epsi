@@ -7,13 +7,14 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './tests/setup.js',
-    include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}', 'tests/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    include: ['tests/integration/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    testTimeout: 10000, // Timeout plus long pour les tests d'intégration
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
-        'tests/setup.js',
+        'tests/',
         '*.config.js'
       ]
     }

@@ -35,7 +35,11 @@ jobs:
         continue-on-error: true
 
       - name: Run unit tests
-        run: npm run test -- -u
+        run: npm run test-unitaire -- -u
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Run integration tests
+        run: npm run test-integration
         working-directory: projects/15-hedwige/src/frontend
 
       - name: Build project
@@ -45,6 +49,13 @@ jobs:
       - name: Build Docker image
         run: docker build -t hedwige-frontend .
         working-directory: projects/15-hedwige/src/frontend
+
+      - name: Run Docker container (detached)
+        run: docker run -d --name hedwige-frontend-test -p 8080:80 hedwige-frontend
+        working-directory: projects/15-hedwige/src/frontend
+
+      - name: Check running containers
+        run: docker ps
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2

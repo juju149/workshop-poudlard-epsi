@@ -965,6 +965,13 @@ M12 : Amélioration continue
 | Maintenance et support (TMA) | 30 000 € |
 | **Total récurrent** | **50 000 € / an** |
 
+### Critères d'acceptation
+- Temps de chargement : **< 1 seconde**
+- Satisfaction utilisateur : **> 85%**
+- Réduction des incidents : **-70%**
+- Gain de temps administratif : **-30%**
+- Adoption mobile : **> 60%** des consultations
+
 ---
 
 ## Annexes

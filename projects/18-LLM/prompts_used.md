@@ -297,7 +297,6 @@ python3 tinyllama_chat.py
 ```
 18-LLM/
 ├── venv/                    # Environnement virtuel Python
-├── gpt2_chat.py            # Script GPT-2 (non fonctionnel sur Python 3.13)
 ├── tinyllama_chat.py       # Script TinyLlama (fonctionnel) ✅
 ├── requirements.txt        # Dépendances Python
 └── prompts_used.md        # Ce fichier

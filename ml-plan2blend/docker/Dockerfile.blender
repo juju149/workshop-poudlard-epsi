@@ -1,0 +1,33 @@
+# Dockerfile for Blender environment
+FROM ubuntu:22.04
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    xz-utils \
+    libx11-6 \
+    libxi6 \
+    libxxf86vm1 \
+    libxfixes3 \
+    libxrender1 \
+    libgl1 \
+    libglu1-mesa \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Blender 3.6
+RUN wget -q https://download.blender.org/release/Blender3.6/blender-3.6.0-linux-x64.tar.xz \
+    && tar -xf blender-3.6.0-linux-x64.tar.xz \
+    && mv blender-3.6.0-linux-x64 /opt/blender \
+    && rm blender-3.6.0-linux-x64.tar.xz \
+    && ln -s /opt/blender/blender /usr/local/bin/blender
+
+# Copy source code
+COPY src/ ./src/
+COPY build/ ./build/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+CMD ["blender", "--version"]

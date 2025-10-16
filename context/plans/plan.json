@@ -1,0 +1,329 @@
+{
+  "project": {
+    "name": "LE THALIE — ZAC Port Marianne",
+    "city": "Montpellier",
+    "address_hint": "Hippocrate - LOT E",
+    "source_pdf": "PRIVE_Plans_THALIE_Montpellier.pdf",
+    "scale": "1:150",
+    "plan_date": "2023-08-22",
+    "notes": [
+      "Document non contractuel, modifications possibles",
+      "Repères et légendes issus du plan fourni"
+    ],
+    "citations": ["file:turn0file0"]
+  },
+  "units": {
+    "length": "meter",
+    "area": "m2"
+  },
+  "assumptions": {
+    "floor_to_floor_height_m": 3.2,
+    "wall_thickness_m": 0.20,
+    "interior_door_width_m": 0.90,
+    "interior_door_height_m": 2.10,
+    "window_head_height_m": 2.10,
+    "window_sill_height_m": 0.90,
+    "grid_origin": [0.0, 0.0, 0.0],
+    "north_hint": "Indiqué N sur plans",
+    "placement_mode": "auto_layout_if_no_coordinates"
+  },
+  "legend_furniture": {
+    "desks_training_tables": [
+      {"type": "table_formation", "size_m": [1.80, 0.40], "code": "T180x40"},
+      {"type": "table_formation", "size_m": [1.20, 0.40], "code": "T120x40"},
+      {"type": "bureau", "size_m": [1.40, 0.80], "code": "B140x80"},
+      {"type": "bureau", "size_m": [1.60, 0.80], "code": "B160x80"},
+      {"type": "table_ronde", "diameter_m": 1.20, "code": "TR120"}
+    ],
+    "storage": [
+      {"type": "armoire_haute", "depth_m": 0.45, "height_m": 1.98, "code": "AR-H198"},
+      {"type": "armoire_basse", "depth_m": 0.45, "height_m": 1.00, "code": "AR-H100"}
+    ],
+    "accessoires": [
+      {"type": "porte_manteau", "code": "PM"},
+      {"type": "lampe_sur_pied", "code": "LSP"},
+      {"type": "tableau_mural", "width_m": 2.0, "height_m": 1.2, "code": "TB"}
+    ],
+    "coworking": [
+      {"type": "table_2_places_tablette", "code": "CW-2T"},
+      {"type": "table_1_place_tablette", "code": "CW-1T"},
+      {"type": "table_3_places_tablette", "code": "CW-3T"},
+      {"type": "table_basse", "code": "CW-L"},
+      {"type": "pouf", "code": "CW-P"}
+    ]
+  },
+  "levels": [
+    {
+      "name": "RdC",
+      "gross_area_m2": 891.0,
+      "notes": [
+        "EPSI WIS, salles pédagogiques, accueil, sanitaires H/F, stock, serveur/TGBT, douches, SAS, hall, polyvalentes",
+        "Indications de mobilier: tables connectées, postes, tableaux"
+      ],
+      "rooms": [
+        {
+          "name": "ACCUEIL",
+          "type": "accueil",
+          "area_m2": null,
+          "tags": ["public", "rez-de-chaussee"]
+        },
+        {
+          "name": "HALL",
+          "type": "circulation",
+          "area_m2": null
+        },
+        {
+          "name": "SERVEUR TGBT",
+          "type": "technique",
+          "area_m2": null,
+          "equipment": ["baie_serveur"]
+        },
+        {
+          "name": "SALLE 1",
+          "type": "salle_cours",
+          "area_m2": 52.0,
+          "furniture": [
+            {"ref": "T180x40", "count": 18, "layout": "rows"},
+            {"ref": "TB", "count": 1}
+          ],
+          "labels_on_plan": ["TABLEAU", "TABLES CONNECTÉES"]
+        },
+        {
+          "name": "SALLE 2",
+          "type": "salle_cours",
+          "area_m2": 24.0,
+          "furniture": [{"ref": "T180x40", "count": 8}, {"ref": "TB", "count": 1}],
+          "labels_on_plan": ["TABLEAU"]
+        },
+        {
+          "name": "SALLE 3",
+          "type": "salle_cours",
+          "area_m2": 40.13,
+          "furniture": [{"ref": "T180x40", "count": 12}, {"ref": "TB", "count": 1}]
+        },
+        {
+          "name": "EPSI WIS / FLEX (SDC)",
+          "type": "flex",
+          "area_m2": 137.0,
+          "furniture": [
+            {"ref": "B160x80", "count": 4},
+            {"ref": "T180x40", "count": 38}
+          ],
+          "labels_on_plan": ["38 TABLES CONNECTÉES", "4 POSTES"]
+        },
+        {
+          "name": "POLYVALENTE 1",
+          "type": "polyvalente",
+          "area_m2": 58.44,
+          "furniture": [{"ref": "TB", "count": 1}]
+        },
+        {
+          "name": "POLYVALENTE 2",
+          "type": "polyvalente",
+          "area_m2": 94.0,
+          "furniture": [{"ref": "TB", "count": 1}]
+        },
+        {
+          "name": "PROFS",
+          "type": "bureau_equipe",
+          "area_m2": 18.8,
+          "furniture": [{"ref": "B140x80", "count": 3}]
+        },
+        {
+          "name": "SAN. H",
+          "type": "sanitaires",
+          "area_m2": null,
+          "gender": "H"
+        },
+        {
+          "name": "SAN. F",
+          "type": "sanitaires",
+          "area_m2": null,
+          "gender": "F"
+        },
+        {
+          "name": "STOCK",
+          "type": "stockage",
+          "area_m2": 17.0
+        },
+        {
+          "name": "SALLE REPAS",
+          "type": "salle_restauration",
+          "area_m2": 23.0
+        },
+        {
+          "name": "MENAGE",
+          "type": "local_menage",
+          "area_m2": 4.0
+        },
+        {
+          "name": "DOUCHES",
+          "type": "sanitaires",
+          "area_m2": 8.85
+        },
+        {
+          "name": "COPIEUR",
+          "type": "services",
+          "area_m2": null
+        },
+        {
+          "name": "ASC",
+          "type": "circulation_verticale",
+          "area_m2": null
+        }
+      ],
+      "plan_labels": [
+        "TABLEAU", "TABLES CONNECTÉES", "POSTES", "CIRCULATION DE SÉCURITÉ INCENDIE"
+      ],
+      "citations": ["file:turn0file0"]
+    },
+    {
+      "name": "R+1",
+      "gross_area_m2": 207.0,
+      "notes": [
+        "Salles 101 à 115, BDE, Sandbox, Mydil, Co-working étudiants, Belvédère, Bureaux 1 & 2, SAN H/F, terrasse",
+        "Plusieurs salles portent un ‘TABLEAU’"
+      ],
+      "rooms": [
+        {"name": "SALLE 101", "type": "salle_cours", "area_m2": 48.0, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 103", "type": "salle_cours", "area_m2": 47.15, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 104", "type": "salle_cours", "area_m2": 40.71, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 105", "type": "salle_cours", "area_m2": 33.42, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 106", "type": "salle_cours", "area_m2": 43.15, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 107", "type": "salle_cours", "area_m2": 49.0, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 108", "type": "salle_cours", "area_m2": 26.22, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 109", "type": "salle_cours", "area_m2": 48.29, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 110", "type": "salle_cours", "area_m2": 23.96, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 111", "type": "salle_cours", "area_m2": 65.86, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 112", "type": "salle_cours", "area_m2": 41.43, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 113", "type": "salle_cours", "area_m2": 47.39, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 114", "type": "salle_cours", "area_m2": 48.0, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SALLE 115", "type": "salle_cours", "area_m2": 46.79, "labels_on_plan": ["TABLEAU"]},
+        {"name": "BUREAU 1", "type": "bureau", "area_m2": 18.25},
+        {"name": "BUREAU 2", "type": "bureau", "area_m2": 15.10},
+        {"name": "CO-WORKING ÉTUDIANTS", "type": "coworking", "area_m2": 75.83, "furniture": [{"ref": "CW-3T", "count": 6}, {"ref": "CW-2T", "count": 4}, {"ref": "CW-1T", "count": 4}, {"ref": "CW-L", "count": 4}, {"ref": "CW-P", "count": 8}]},
+        {"name": "BELVEDERE", "type": "espace_ouvert", "area_m2": null},
+        {"name": "BDE", "type": "association", "area_m2": 20.0, "labels_on_plan": ["TABLEAU"]},
+        {"name": "SAND BOX", "type": "labo", "area_m2": 34.0},
+        {"name": "MYDIL", "type": "labo", "area_m2": 34.0},
+        {"name": "SAN. H", "type": "sanitaires", "area_m2": null, "gender": "H"},
+        {"name": "SAN. F", "type": "sanitaires", "area_m2": null, "gender": "F"},
+        {"name": "TERRASSE", "type": "exterieur", "area_m2": null},
+        {"name": "ASC", "type": "circulation_verticale", "area_m2": null}
+      ],
+      "citations": ["file:turn0file0"]
+    },
+    {
+      "name": "R+2",
+      "gross_area_m2": 875.0,
+      "notes": [
+        "Grands espaces (GRAND SALLE 1 & 2), groupes 1-4, BOX, DIR, ADMIN, FLEX 1/2, INFO, SDR, ARCHIVES, IEFT/IFAG/EPSI/WIS, co-working étudiants, belvédère, ICL, SAN H/F",
+        "Plusieurs postes indiqués (ex: 12 POSTES, 8 POSTES, 5 POSTES...) et nombreux TABLEAU"
+      ],
+      "rooms": [
+        {"name": "GRAND SALLE 1", "type": "amphi", "area_m2": 71.64, "labels_on_plan": ["TABLEAU"]},
+        {"name": "GRAND SALLE 2", "type": "amphi", "area_m2": 53.0, "labels_on_plan": ["TABLEAU"]},
+        {"name": "GROUPE 1", "type": "salle_groupe", "area_m2": 25.26, "labels_on_plan": ["TABLEAU"]},
+        {"name": "GROUPE 2", "type": "salle_groupe", "area_m2": 57.43, "labels_on_plan": ["TABLEAU"]},
+        {"name": "GROUPE 3", "type": "salle_groupe", "area_m2": 31.81, "labels_on_plan": ["TABLEAU"]},
+        {"name": "GROUPE 4", "type": "salle_groupe", "area_m2": 27.32, "labels_on_plan": ["TABLEAU"]},
+        {"name": "BOX 1", "type": "box", "area_m2": 6.60},
+        {"name": "BOX 2", "type": "box", "area_m2": 6.60},
+        {"name": "BOX 3", "type": "box", "area_m2": 5.43},
+        {"name": "ARCHIVES", "type": "archives", "area_m2": 5.43},
+        {"name": "IEFT", "type": "pole_ecole", "area_m2": 20.90},
+        {"name": "EPSI/WIS", "type": "pole_ecole", "area_m2": 20.90},
+        {"name": "IFAG", "type": "pole_ecole", "area_m2": 15.18},
+        {"name": "DIR IEFT", "type": "direction", "area_m2": 10.75},
+        {"name": "DIR IFAG", "type": "direction", "area_m2": 10.70},
+        {"name": "DIR", "type": "direction", "area_m2": 10.70},
+        {"name": "ADMIN", "type": "administration", "area_m2": 13.91},
+        {"name": "FLEX 1", "type": "flex", "area_m2": 24.0},
+        {"name": "FLEX 2", "type": "flex", "area_m2": 20.90},
+        {"name": "INFO", "type": "informatique", "area_m2": 32.90, "labels_on_plan": ["12 POSTES"]},
+        {"name": "SDR", "type": "salle_reunion", "area_m2": 27.32},
+        {"name": "ESPACE PAUSE", "type": "pause", "area_m2": 19.38},
+        {"name": "CO-WORKING ÉTUDIANTS", "type": "coworking", "area_m2": 53.70},
+        {"name": "BELVEDERE", "type": "espace_ouvert", "area_m2": 12.06},
+        {"name": "ICL", "type": "salle", "area_m2": 25.95},
+        {"name": "SAN. H", "type": "sanitaires", "area_m2": null, "gender": "H"},
+        {"name": "SAN. F", "type": "sanitaires", "area_m2": null, "gender": "F"},
+        {"name": "ASC", "type": "circulation_verticale", "area_m2": null}
+      ],
+      "citations": ["file:turn0file0"]
+    }
+  ],
+  "counts_and_labels_seen": {
+    "rdc": {
+      "tables_connectees_counts": [18, 23, 38],
+      "postes_counts": [2, 3, 4],
+      "other_labels": ["CIRCULATION DE SÉCURITÉ INCENDIE", "PP 93", "PMR"]
+    },
+    "r_plus_1": {
+      "tables_label": "23 tables (ex. sur une salle)",
+      "tableau_present": true
+    },
+    "r_plus_2": {
+      "postes_counts": [3, 5, 7, 8, 12],
+      "tableau_present": true
+    }
+  },
+  "security_compliance_notes": [
+    "Prévoir 2 sorties de sécurité si effectifs > 20 (mention R+2)",
+    "Certaines pièces mentionnées comme non aux normes selon notes du plan"
+  ],
+  "parametric_generation": {
+    "wall_height_m": 3.0,
+    "door_spec_default": {"width_m": 0.9, "height_m": 2.1, "thickness_m": 0.04},
+    "window_spec_default": {"width_m": 1.2, "height_m": 1.2, "sill_m": 0.9},
+    "floor_material": "concrete_generic",
+    "wall_material": "plaster_white",
+    "table_material": "laminated_wood_oak",
+    "desk_material": "laminated_wood_beech",
+    "board_material": "whiteboard"
+  },
+  "auto_layout_rules": {
+    "salle_cours": {
+      "table_ref": "T180x40",
+      "spacing_m": {"between_rows": 1.20, "between_tables": 0.10, "from_wall": 0.80},
+      "teacher_zone_depth_m": 1.50,
+      "place_board_on_long_wall": true,
+      "board_clearance_m": 1.20
+    },
+    "coworking": {
+      "islands": true,
+      "island_size": 4,
+      "min_aisle_m": 1.20
+    },
+    "amphi": {
+      "rake": 0.0,
+      "rows": 6,
+      "row_spacing_m": 1.20
+    },
+    "box": {
+      "desk_ref": "B140x80",
+      "single_desk": true
+    },
+    "bureau": {
+      "desk_ref": "B160x80",
+      "storage": "AR-H198"
+    }
+  },
+  "outputs": {
+    "blender": {
+      "version": "4.0+",
+      "collections": ["Architecture", "Mobilier", "Signalétique"],
+      "naming": {
+        "level": "L_{name}",
+        "room": "RM_{level}_{name}",
+        "wall": "W_{room}_{index}",
+        "desk": "D_{room}_{index}"
+      },
+      "export": {
+        "blend_path": "thalie_scene.blend",
+        "fbx_path": "thalie_scene.fbx",
+        "gltf_path": "thalie_scene.glb"
+      }
+    }
+  }
+}

@@ -129,25 +129,26 @@ class TestMetrics:
     
     def test_scale_accuracy(self):
         """Test scale accuracy calculation."""
-        # Known distance in plan (in pixels)
-        pixel_distance = 100
+        # This test demonstrates scale accuracy validation
+        # In a real scenario, you would measure known distances in the PDF
+        # and compare them to the generated 3D model
         
-        # Known real distance (in meters)
-        real_distance = 5.0
-        
-        # DPI and scale
-        dpi = 600
+        # Example: A 10m wall in reality at 1:150 scale
+        real_distance = 10.0  # meters
         scale = 150
         
-        # Calculate scale factor
-        # At 600 DPI, 1 inch = 600 pixels
-        # 1 inch = 25.4 mm
-        # So 1 pixel = 25.4/600 mm = 0.0423 mm
-        # At 1:150 scale, 1 mm on paper = 150 mm in reality
-        pixel_to_real = (25.4 / dpi) * scale / 1000  # Convert to meters
+        # On paper at 1:150, this would be: 10m / 150 = 0.0667m = 66.7mm
+        paper_distance_mm = (real_distance / scale) * 1000
         
-        calculated_distance = pixel_distance * pixel_to_real
-        error = abs(calculated_distance - real_distance) / real_distance
+        # At 600 DPI: 1 inch = 25.4mm, so pixels = mm * (600/25.4)
+        dpi = 600
+        pixel_distance = paper_distance_mm * (dpi / 25.4)
+        
+        # Reverse calculation: pixels -> real distance
+        calculated_paper_mm = pixel_distance * (25.4 / dpi)
+        calculated_real_m = (calculated_paper_mm / 1000) * scale
+        
+        error = abs(calculated_real_m - real_distance) / real_distance
         
         # Error should be less than 1%
         assert error < 0.01

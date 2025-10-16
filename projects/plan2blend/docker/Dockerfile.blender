@@ -1,0 +1,48 @@
+FROM ubuntu:22.04
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    xz-utils \
+    libx11-6 \
+    libxi6 \
+    libxxf86vm1 \
+    libxfixes3 \
+    libxrender1 \
+    libgl1 \
+    libglu1-mesa \
+    libsm6 \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Blender
+ARG BLENDER_VERSION=3.6
+ARG BLENDER_VERSION_FULL=3.6.5
+ARG BLENDER_URL=https://download.blender.org/release/Blender${BLENDER_VERSION}/blender-${BLENDER_VERSION_FULL}-linux-x64.tar.xz
+
+RUN wget -O /tmp/blender.tar.xz ${BLENDER_URL} && \
+    tar -xf /tmp/blender.tar.xz -C /opt && \
+    mv /opt/blender-${BLENDER_VERSION_FULL}-linux-x64 /opt/blender && \
+    rm /tmp/blender.tar.xz
+
+# Add Blender to PATH
+ENV PATH="/opt/blender:${PATH}"
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY requirements.txt /app/
+
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Copy scripts
+COPY scripts/ /app/scripts/
+
+# Default command
+CMD ["/bin/bash"]

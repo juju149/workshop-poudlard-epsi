@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # Vectorizer service (can be replaced with actual AI service)
+  vectorizer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.blender
+    volumes:
+      - ../data:/app/data
+      - ../build:/app/build
+      - ../scripts:/app/scripts
+    command: >
+      bash -c "
+      echo 'Running vectorizer...' &&
+      python3 /app/scripts/10_floorplan_vectorizer.py
+        --image /app/data/work/plan_600dpi.png
+        --scale 1:150
+        --out /app/data/work/floorplan.json
+        --sample
+      "
+    working_dir: /app
+
+  # Blender service for 3D generation
+  blender:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.blender
+    volumes:
+      - ../data:/app/data
+      - ../build:/app/build
+      - ../scripts:/app/scripts
+    environment:
+      - DISPLAY=:0
+    working_dir: /app
+    # Command is typically provided at runtime
+    entrypoint: ["blender"]
+
+  # Complete pipeline
+  pipeline:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.blender
+    volumes:
+      - ../data:/app/data
+      - ../build:/app/build
+      - ../scripts:/app/scripts
+    command: >
+      bash -c "
+      echo '=== Plan2Blend Pipeline ===' &&
+      echo 'Step 1: Vectorizing floor plan...' &&
+      python3 /app/scripts/10_floorplan_vectorizer.py
+        --image /app/data/work/plan_600dpi.png
+        --scale 1:150
+        --out /app/data/work/floorplan.json
+        --sample &&
+      echo 'Step 2: Generating Blender model...' &&
+      blender -b -P /app/scripts/20_json_to_blender.py --
+        /app/data/work/floorplan.json
+        /app/build/out/thalie.blend
+        --wall_thickness 0.20
+        --wall_height 2.80 &&
+      echo 'Step 3: Generating overlays...' &&
+      python3 /app/scripts/30_quality_overlays.py
+        --plan /app/data/work/plan_600dpi.png
+        --blend /app/build/out/thalie.blend
+        --out /app/build/out/overlays &&
+      echo '=== Pipeline Complete ==='
+      "
+    working_dir: /app

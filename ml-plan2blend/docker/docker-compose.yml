@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  training:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.train
+    volumes:
+      - ../data:/app/data
+      - ../datasets:/app/datasets
+      - ../build:/app/build
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python -m src.training.train_segmentation --data datasets/ --epochs 10
+
+  inference:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.train
+    volumes:
+      - ../data:/app/data
+      - ../build:/app/build
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      python -m src.inference.infer
+      --image data/work/plan_600dpi.png
+      --scale 1:150
+      --out build/out/floorplan.json
+
+  blender:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.blender
+    volumes:
+      - ../build:/app/build
+      - ../src:/app/src
+    environment:
+      - DISPLAY=:99
+    command: >
+      blender -b -P src/blender/json_to_blender.py --
+      build/out/floorplan.json
+      build/out/thalie.blend
+      --wall_thickness 0.20
+      --wall_height 2.80
+
+  qa:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.train
+    volumes:
+      - ../data:/app/data
+      - ../build:/app/build
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      python -m src.inference.metrics
+      --plan data/work/plan_600dpi.png
+      --blend build/out/thalie.blend
+      --out build/reports

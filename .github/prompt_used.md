@@ -20,7 +20,7 @@ Ce fichier regroupe tous les prompts utilisés lors de la configuration et du d�
    → Toutes les étapes du workflow CI/CD sont maintenant exécutées dans `projects/15-hedwige/src/frontend`.
 
 4. **Ajout des prompts dans un README**
-   > Ajoute tous mes prompts dans un readme prompt_used dans le ossier .githlow
+   > Ajoute tous mes prompts dans un readme prompt_used dans le dossier .gitflow
    **Résultat :**
    → Création du fichier `.github/prompt_used.md` regroupant tous les prompts et leurs résultats.
 
